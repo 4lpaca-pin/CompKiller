@@ -330,7 +330,7 @@ local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = workspace.CurrentCamera;
 
 local Compkiller = {
-	Version = '1.8',
+	Version = '1.9',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -339,7 +339,8 @@ local Compkiller = {
 		TabOpen = 185,
 		TabClose = 85,
 	},
-	ArcylicParent = CurrentCamera
+	ArcylicParent = CurrentCamera,
+	ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s; end,
 };
 
 Compkiller.Colors = {
@@ -1201,8 +1202,200 @@ Compkiller.Lucide = {
 	["lucide-zoom-out"] = "rbxassetid://10747384679",
 };
 
-function Compkiller:_GetIcon(name : string) : string
-	return Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or name;
+Compkiller.FontAwesome = {
+	a = "rbxassetid://74244459944328",
+	['accessible-icon'] = "rbxassetid://135242143909610",
+	accusoft = "rbxassetid://94057545767519",
+	['address-book'] = "rbxassetid://129578640498728",
+	['address-card'] = 'rbxassetid://102106715141928',
+	['align-center'] = "rbxassetid://84408132800466",
+	['align-justify'] = "rbxassetid://125569339749500",
+	['align-left'] = "rbxassetid://110008004178539",
+	['align-right'] = "rbxassetid://79774893981710",
+	alipay = "rbxassetid://134274199490629",
+	anchor = "rbxassetid://94979524088900",
+	['anchor-circle-check'] = "rbxassetid://91871463373335",
+	['anchor-circle-exclamation'] = "rbxassetid://72303311082053",
+	['anchor-circle-xmark'] = "rbxassetid://106917001300524",
+	['anchor-lock'] = "rbxassetid://109198662645391",
+	android = "rbxassetid://93605821179752",
+	['angle-down'] = "rbxassetid://122395101934469",
+	['angle-left'] = "rbxassetid://132632410309959",
+	['angle-right'] = "rbxassetid://105971664068240",
+	['angles-down'] = "rbxassetid://96703500127872",
+	['angles-left'] = "rbxassetid://70595546989447",
+	['angles-right'] = "rbxassetid://131176182882747",
+	['angles-up'] = "rbxassetid://96847020381396",
+	['angle-up'] = "rbxassetid://136517226470297",
+	['arrow-down'] = "rbxassetid://100174052036797",
+	['arrow-left'] = "rbxassetid://133922718486450",
+	['arrow-pointer'] = "rbxassetid://128639550333559",
+	['arrow-right'] = 'rbxassetid://105166519175969',
+	['arrow-right-arrow-left'] = "rbxassetid://87405428139040",
+	['arrow-right-from-bracket'] = "rbxassetid://111722018253482",
+	['arrow-right-to-bracket'] = "rbxassetid://79400903745367",
+	['arrow-rotate-left'] = "rbxassetid://127876635051023",
+	['arrow-rotate-right'] = "rbxassetid://82773599534347",
+	['arrows-left-right'] = "rbxassetid://85625938291926",
+	['arrows-rotate'] = "rbxassetid://109882153776270",
+	['arrows-up-down'] = "rbxassetid://88240470530518",
+	['arrows-up-down-left-right'] = "rbxassetid://136830364721572",
+	['arrow-trend-down'] = "rbxassetid://138593805214121",
+	['arrow-trend-up'] = "rbxassetid://121301107868410",
+	['arrow-up'] = "rbxassetid://116473498857626",
+	['arrow-up-from-bracket'] = "rbxassetid://77716847027695",
+	['arrow-up-right-from-square'] = "rbxassetid://101883941536459",
+	at = "rbxassetid://116468402170315",
+	atom = "rbxassetid://136905279132440",
+	['audio-description'] = 'rbxassetid://137490376195308',
+	award = "rbxassetid://134322732056464",
+	backward = "rbxassetid://115437448962693",
+	['backward-fast'] = "rbxassetid://133478473989228",
+	['backward-step'] = "rbxassetid://118301206125870",
+	ban = "rbxassetid://89004310664420",
+	bandage = "rbxassetid://109104902535966",
+	bars = "rbxassetid://127661324755454",
+	['bars-progress'] = "rbxassetid://77774174241071",
+	['bars-staggered'] = "rbxassetid://97337529919486",
+	baseball = "rbxassetid://87677782809968",
+	basketball = "rbxassetid://71403045563776",
+	['basket-shopping'] = "rbxassetid://129578273645224",
+	['battery-empty'] = "rbxassetid://99777750808099",
+	['battery-full'] = "rbxassetid://93999278270214",
+	['battery-half'] = "rbxassetid://87762099115036",
+	['battery-quarter'] = "rbxassetid://96680551535938",
+	['battery-three-quarters'] = "rbxassetid://130840615974067",
+	bell = "rbxassetid://109971903438934",
+	['bell-slash'] = "rbxassetid://101758939103378",
+	bilibili = "rbxassetid://85834752961243",
+	biohazard = "rbxassetid://102610067899783",
+	bitcoin = "rbxassetid://131632152157382",
+	['bitcoin-sign'] = "rbxassetid://127809070259506",
+	['bluetooth-b'] = "rbxassetid://96522278309021",
+	bluetooth = "rbxassetid://113081372628241",
+	bolt = "rbxassetid://89858717966393",
+	bomb = "rbxassetid://113184250292244",
+	book = "rbxassetid://134006112957521",
+	['book-open'] = "rbxassetid://109774137257967",
+	bug = "rbxassetid://105314179657552",
+	['bug-slash'] = "rbxassetid://133973969610093",
+	broom = "rbxassetid://95267009545395",
+	bullhorn = "rbxassetid://87251830910561",
+	['bullseye'] = "rbxassetid://83080500555400",
+	bus = "rbxassetid://126579638968493",
+	calculator = "rbxassetid://119527046782470",
+	camera = "rbxassetid://133029797251962",
+	['cc-amazon-pay'] = "rbxassetid://108859760370504",
+	['cc-amex'] = "rbxassetid://138233598058785",
+	['cc-apple-pay'] = "rbxassetid://133747941882534",
+	['cc-diners-club'] = "rbxassetid://99626539664553",
+	['cc-mastercard'] = "rbxassetid://118541621561504",
+	['cc-visa'] = "rbxassetid://120055576031063",
+	['cc-paypal'] = "rbxassetid://87250418163030",
+	check = "rbxassetid://129443092324752",
+	['chevron-down'] = "rbxassetid://109535175596957",
+	['chevron-left'] = "rbxassetid://129113930144228",
+	['chevron-right'] = "rbxassetid://105723602996553",
+	['chevron-up'] = "rbxassetid://117264500851637",
+	chromecast = "rbxassetid://71543589030583",
+	circle = "rbxassetid://131274957777266",
+	['circle-check'] = "rbxassetid://98678528147000",
+	['circle-info'] = "rbxassetid://97519285421665",
+	clipboard = 'rbxassetid://111512950362265',
+	['clipboard-check'] = "rbxassetid://118535733506457",
+	clock = "rbxassetid://98767608471295",
+	code = "rbxassetid://91882036126433",
+	['computer-mouse'] = "rbxassetid://114752565381440",
+	cookie = "rbxassetid://101854685117513",
+	copy = "rbxassetid://76996819137437",
+	copyright = "rbxassetid://131736117717053",
+	['credit-card'] = "rbxassetid://85213342061383",
+	['crosshairs'] = "rbxassetid://133441774847498",
+	database = "rbxassetid://109882554524389",
+	discord = "rbxassetid://75871011309830",
+	display = "rbxassetid://101851152220134",
+	download = "rbxassetid://122321311031549",
+	['earth-africa'] = "rbxassetid://107029199584204",
+	['earth-americas'] = "rbxassetid://105574352653407",
+	['earth-asia'] = "rbxassetid://138155660327900",
+	['earth-europe'] = "rbxassetid://134638370907021",
+	['earth-oceania'] = "rbxassetid://121780690380624",
+	envelope = "rbxassetid://136184483524922",
+	['envelope-open'] = "rbxassetid://132492127839357",
+	envira = "rbxassetid://75781570526788",
+	equals = "rbxassetid://134271902308970",
+	eraser = "rbxassetid://128970640154301",
+	ethereum = "rbxassetid://103421769879532",
+	exclamation = "rbxassetid://125718656366676",
+	eye = "rbxassetid://95235861336970",
+	feather = "rbxassetid://135995843954302",
+	fingerprint = "rbxassetid://125379360015007",
+	fire = "rbxassetid://122498238725085",
+	['floppy-disk'] = "rbxassetid://101374426361499",
+	folder = "rbxassetid://131374292202389",
+	['folder-open'] = "rbxassetid://78238714442180",
+	forward = "rbxassetid://107937467448020",
+	['forward-fast'] = "rbxassetid://83735840669276",
+	['forward-step'] = "rbxassetid://104040171143566",
+	gear = "rbxassetid://137945854328407",
+	gift = "rbxassetid://129718366414314",
+	git = "rbxassetid://117711060446092",
+	github = "rbxassetid://123783733365919",
+	globe = "rbxassetid://102861769355196",
+	['hand-holding-hand'] = "rbxassetid://120797412134954",
+	headphones = "rbxassetid://86076153665072",
+	headset = "rbxassetid://108070801288944",
+	['headphones-simple'] = "rbxassetid://97516570978183",
+	house = "rbxassetid://86540166012974",
+	['house-chimney'] = "rbxassetid://90066192203346",
+	image = "rbxassetid://107205506080751",
+	infinity = "rbxassetid://129024756905166",
+	info = "rbxassetid://113157514619684",
+	keyboard = "rbxassetid://97417417526948",
+	list = "rbxassetid://87155993544457",
+	['location-arrow'] = "rbxassetid://72621673664457",
+	['location-crosshairs'] = "rbxassetid://93887450723164",
+	lock = 'rbxassetid://80031239225283',
+	palette = "rbxassetid://81372281623830",
+	paste = "rbxassetid://88846256867074",
+	paw = "rbxassetid://80005916079930",
+	pen = "rbxassetid://97404859124912",
+	pencil = "rbxassetid://76590960968733",
+	['pen-nib'] = "rbxassetid://91232219924341",
+	['pen-ruler'] = "rbxassetid://138407458813207",
+	phone = "rbxassetid://72814141651992",
+	plane = "rbxassetid://136248807279679",
+	plus = "rbxassetid://133137619535544",
+	['right-left'] = "rbxassetid://91273051324368",
+	['right-to-bracket'] = "rbxassetid://137132451900886",
+	rotate = "rbxassetid://95883878890200",
+	['rotate-right'] = "rbxassetid://93357988077552",
+	['rotate-left'] = "rbxassetid://96753646113822",
+	shield = "rbxassetid://73441026473893",
+	['shield-halved'] = "rbxassetid://114554606211174",
+	user = "rbxassetid://98376828270066",
+	unlock = "rbxassetid://99060354229117",
+	trash = "rbxassetid://82859108629080",
+	['trash-can'] = "rbxassetid://81463703129214",
+	skull = "rbxassetid://99276754296574",
+	robot = "rbxassetid://134497060038109",
+	tag = "rbxassetid://129024358125754",
+	thumbtack = "rbxassetid://119847869089109",
+	['thumbs-up'] = "rbxassetid://74340984021785",
+	['thumbs-down'] = "rbxassetid://86090492737223",
+	['user-gear'] = "rbxassetid://137604201056497",
+	video = "rbxassetid://112274059143251",
+	virus = "rbxassetid://91843339206686",
+	volleyball = "rbxassetid://73870192536894",
+	['magnifying-glass'] = "rbxassetid://74387839235930",
+};
+
+function Compkiller:_GetIcon(name : string , font_aws) : string
+	if font_aws then
+		return Compkiller.FontAwesome[name] or name;
+	end;
+	
+	return Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
 end;
 
 function Compkiller:_RandomString() : string
@@ -5131,7 +5324,11 @@ function Compkiller.new(Config : Window)
 	CompKiller.ResetOnSpawn = false
 	CompKiller.IgnoreGuiInset = true;
 	CompKiller.ZIndexBehavior = Enum.ZIndexBehavior.Global;
-
+	
+	Compkiller.ProtectGui(CompKiller);
+	
+	WindowArgs.Root = CompKiller;
+	
 	table.insert(Compkiller.Windows , CompKiller);
 
 	MainFrame.Active = true;
@@ -7184,16 +7381,14 @@ function Compkiller.new(Config : Window)
 						WindowArgs.Notify.new({
 							Title = "Configs",
 							Icon = Compkiller:_GetIcon(Config.Logo),
-							Content = "Save config \""..v.Info.Author.."\""
+							Content = "Save config \""..v.Name.."\""
 						})
 
-						local NewAuthorText = ((v.Info.Author == WindowArgs.Username) and  WindowArgs.Username) or v.Info.Author .. " [EDIT]";
-
-						Button:SetInfo(NewAuthorText,v.Name);
+						Button:SetInfo(v.Info.Author,v.Name);
 
 						Configuration.Config:WriteConfig({
 							Name = v.Name,
-							Author = NewAuthorText;
+							Author = v.Info.Author;
 						});
 					end
 
@@ -7852,7 +8047,7 @@ function Compkiller.new(Config : Window)
 				if IsOpen then
 					if Section:GetAttribute('Height') then
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
-							Size = UDim2.new(1, 0, 0, math.abs(Section:GetAttribute('Height')) - 1)
+							Size = UDim2.new(1, 0, 0, math.abs(Section:GetAttribute('Height')) + 5)
 						});
 					else
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
@@ -7901,7 +8096,9 @@ function Compkiller.new(Config : Window)
 				end;
 
 				if Latest >= frameFound then
-					if allscale >= (Parent.AbsoluteSize.Y - 25) or UIListLayout.AbsoluteContentSize.Y >= (Parent.AbsoluteSize.Y - 25) then
+					local lscale = 25;
+					
+					if allscale >= (Parent.AbsoluteSize.Y - lscale) or UIListLayout.AbsoluteContentSize.Y >= (Parent.AbsoluteSize.Y - lscale) then
 						Section:SetAttribute('Height',nil);
 					else
 						local parentScale = 0;
@@ -8324,7 +8521,7 @@ function Compkiller.new(Config : Window)
 		config.Username = config.Username or LocalPlayer.DisplayName;
 		config.ExpireDate = config.ExpireDate or "NEVER";
 		config.WindowName = config.WindowName or Config.Name;
-		config.UserProfile = config.UserProfile or string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=150&h=150",tostring(LocalPlayer.UserId));
+		config.UserProfile = config.UserProfile or WindowArgs.Profile or string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=150&h=150",tostring(LocalPlayer.UserId));
 
 		UserText.Text = config.Username;
 		CompLogo.Image = config.Logo;
@@ -8543,8 +8740,6 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 	local notify = Compkiller.newNotify();
 
 	function Args:WriteConfig(Config: WriteConfig)
-
-
 		Config = Compkiller.__CONFIG(Config , {
 			Name = Compkiller:_RandomString(),
 			Author = LocalPlayer.Name,
