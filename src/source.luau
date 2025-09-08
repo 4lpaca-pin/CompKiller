@@ -330,7 +330,7 @@ local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = workspace.CurrentCamera;
 
 local Compkiller = {
-	Version = '1.9',
+	Version = '2.0',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -1394,7 +1394,7 @@ function Compkiller:_GetIcon(name : string , font_aws) : string
 	if font_aws then
 		return Compkiller.FontAwesome[name] or name;
 	end;
-	
+
 	return Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
 end;
 
@@ -5324,11 +5324,11 @@ function Compkiller.new(Config : Window)
 	CompKiller.ResetOnSpawn = false
 	CompKiller.IgnoreGuiInset = true;
 	CompKiller.ZIndexBehavior = Enum.ZIndexBehavior.Global;
-	
+
 	Compkiller.ProtectGui(CompKiller);
-	
+
 	WindowArgs.Root = CompKiller;
-	
+
 	table.insert(Compkiller.Windows , CompKiller);
 
 	MainFrame.Active = true;
@@ -8045,7 +8045,7 @@ function Compkiller.new(Config : Window)
 				Section:SetAttribute('OrigninalScale',UIListLayout.AbsoluteContentSize.Y);
 
 				if IsOpen then
-					if Section:GetAttribute('Height') then
+					if Section:GetAttribute('Height') and not Compkiller:_IsMobile() then
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
 							Size = UDim2.new(1, 0, 0, math.abs(Section:GetAttribute('Height')) + 5)
 						});
@@ -8097,7 +8097,7 @@ function Compkiller.new(Config : Window)
 
 				if Latest >= frameFound then
 					local lscale = 25;
-					
+
 					if allscale >= (Parent.AbsoluteSize.Y - lscale) or UIListLayout.AbsoluteContentSize.Y >= (Parent.AbsoluteSize.Y - lscale) then
 						Section:SetAttribute('Height',nil);
 					else
