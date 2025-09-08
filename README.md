@@ -11,3 +11,18 @@ CompKiller UI For Roblox (https://compkiller.net)
 - [**[Document 📝]**](https://cat-sus.gitbook.io/compkiller/documents/interface)
 - [**[Example 🏫]**](https://github.com/4lpaca-pin/CompKiller/blob/main/examples/Full.luau)
 - [**[Source Code 🔓]**](https://github.com/4lpaca-pin/CompKiller/blob/main/src/source.luau)
+
+# Other Functions 🎖️
+### Icons
+```lua
+Compkiller:_GetIcon(<name : String>) -> Rbx AssetId : String
+```
+Icon from fontawesome
+```lua
+Compkiller:_GetIcon(<name : String> , true) -> Rbx AssetId : String
+```
+
+### Random String
+```lua
+Compkiller:_RandomString() -> CK=............. : String
+```
