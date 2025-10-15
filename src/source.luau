@@ -4,6 +4,8 @@
     Author: 4lpaca
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
+    Version: 2.1
+    Original: compkiller.net
 --]]
 
 --- Export Types ---
@@ -203,7 +205,7 @@ if game:GetService('RunService'):IsStudio() then
 
 	local __get_path_c = function(path)
 		return (string.find(path,'/',1,true) and string.split(path,'/')) or (string.find(path,'\\',1,true) and string.split(path,'\\')) or {path};
-	end
+	end;
 
 	local __get_path = function(path)
 		local main = __get_path_c(path);
@@ -325,12 +327,12 @@ local RunService: RunService = cloneref(game:GetService('RunService'));
 local Players: Players = cloneref(game:GetService('Players'));
 local HttpService: HttpService = cloneref(game:GetService('HttpService'));
 local LocalPlayer: Player = Players.LocalPlayer;
-local CoreGui: PlayerGui = (gethui and gethui()) or cloneref(game:FindFirstChild('CoreGui')) or LocalPlayer.PlayerGui;
+local CoreGui: PlayerGui = (gethui and gethui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
 local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = workspace.CurrentCamera;
 
 local Compkiller = {
-	Version = '2.0',
+	Version = '2.1',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -5803,7 +5805,7 @@ function Compkiller.new(Config : Window)
 		Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Icon.BorderSizePixel = 0
 		Icon.Position = UDim2.new(0, 15, 0.5, 0)
-		Icon.Size = UDim2.new(0, 22, 0, 22)
+		Icon.Size = UDim2.new(0, 15, 0, 15)
 		Icon.ZIndex = 3
 		Icon.Image = Compkiller:_GetIcon(TabConfig.Icon);
 		Icon.ImageColor3 = Compkiller.Colors.Highlight
@@ -5982,7 +5984,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 15, 0.5, 0),
-					Size = UDim2.new(0, 22, 0, 22),
+					Size = UDim2.new(0, 17, 0, 17),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6009,7 +6011,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 12, 0.5, 0),
-					Size = UDim2.new(0, 20, 0, 20),
+					Size = UDim2.new(0, 18, 0, 18),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6289,7 +6291,7 @@ function Compkiller.new(Config : Window)
 		Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Icon.BorderSizePixel = 0
 		Icon.Position = UDim2.new(0, 15, 0.5, 0)
-		Icon.Size = UDim2.new(0, 22, 0, 22)
+		Icon.Size = UDim2.new(0, 15, 0, 15)
 		Icon.ZIndex = 3
 		Icon.Image = Compkiller:_GetIcon(Configuration.Icon);
 		Icon.ImageColor3 = Compkiller.Colors.Highlight
@@ -6858,7 +6860,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 15, 0.5, 0),
-					Size = UDim2.new(0, 22, 0, 22),
+					Size = UDim2.new(0, 17, 0, 17),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6885,7 +6887,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 12, 0.5, 0),
-					Size = UDim2.new(0, 20, 0, 20),
+					Size = UDim2.new(0, 18, 0, 18),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -7574,7 +7576,7 @@ function Compkiller.new(Config : Window)
 			Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			Icon.BorderSizePixel = 0
 			Icon.Position = UDim2.new(0, 15, 0.5, 0)
-			Icon.Size = UDim2.new(0, 22, 0, 22)
+			Icon.Size = UDim2.new(0, 15, 0, 15)
 			Icon.ZIndex = 3
 			Icon.Image = Compkiller:_GetIcon(TabConfig.Icon);
 			Icon.ImageColor3 = Compkiller.Colors.Highlight
@@ -7793,7 +7795,7 @@ function Compkiller.new(Config : Window)
 
 					Compkiller:_Animation(Icon,Tween,{
 						Position = UDim2.new(0, 15, 0.5, 0),
-						Size = UDim2.new(0, 22, 0, 22),
+						Size = UDim2.new(0, 17, 0, 17),
 					});
 
 					Compkiller:_Animation(TabNameLabel,Tween,{
@@ -7820,7 +7822,7 @@ function Compkiller.new(Config : Window)
 
 					Compkiller:_Animation(Icon,Tween,{
 						Position = UDim2.new(0, 12, 0.5, 0),
-						Size = UDim2.new(0, 20, 0, 20),
+						Size = UDim2.new(0, 18, 0, 18),
 					});
 
 					Compkiller:_Animation(TabNameLabel,Tween,{
@@ -8045,7 +8047,12 @@ function Compkiller.new(Config : Window)
 				Section:SetAttribute('OrigninalScale',UIListLayout.AbsoluteContentSize.Y);
 
 				if IsOpen then
-					if Section:GetAttribute('Height') and not Compkiller:_IsMobile() then
+					local FullScale = Section.AbsolutePosition.Y + UIListLayout.AbsoluteContentSize.Y;
+					local RefPos = Parent.AbsolutePosition.Y + Parent.AbsoluteSize.Y;
+					
+					if (Section:GetAttribute('Height') and not Compkiller:_IsMobile() and FullScale <= RefPos) then
+						print(Section:GetAttribute('Height'));
+						
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
 							Size = UDim2.new(1, 0, 0, math.abs(Section:GetAttribute('Height')) + 5)
 						});
@@ -8053,6 +8060,10 @@ function Compkiller.new(Config : Window)
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
 							Size = UDim2.new(1, 0, 0, math.abs(UIListLayout.AbsoluteContentSize.Y) - 1)
 						});
+						
+						if Section:GetAttribute('Lasth') and UIListLayout.AbsoluteContentSize.Y > Section:GetAttribute('Lasth') then
+							Section:SetAttribute('Lasth',math.abs(UIListLayout.AbsoluteContentSize.Y) - 1);
+						end;
 					end;
 
 					TabArgs.SectionClose[Parent][Section] = nil;
@@ -8110,8 +8121,13 @@ function Compkiller.new(Config : Window)
 						end;
 
 						local remainingHeight = UIListLayout.AbsoluteContentSize.Y + (Parent.AbsoluteSize.Y - (parentScale));
-
+						
+						if Section:GetAttribute('Lasth') then
+							remainingHeight = math.max(remainingHeight , Section:GetAttribute('Lasth'));
+						end;
+						
 						Section:SetAttribute('Height',remainingHeight);
+						Section:SetAttribute('Lasth',remainingHeight);
 					end;
 				else
 					Section:SetAttribute('Height',nil);
