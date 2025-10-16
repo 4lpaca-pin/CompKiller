@@ -4,7 +4,7 @@
     Author: 4lpaca
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
-    Version: 2.1
+    Version: 2.2
     Original: compkiller.net
 --]]
 
@@ -329,14 +329,14 @@ local HttpService: HttpService = cloneref(game:GetService('HttpService'));
 local LocalPlayer: Player = Players.LocalPlayer;
 local CoreGui: PlayerGui = (gethui and gethui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
 local Mouse: Mouse = LocalPlayer:GetMouse();
-local CurrentCamera: Camera? = workspace.CurrentCamera;
+local CurrentCamera: Camera? = cloneref(workspace.CurrentCamera);
 
 local Compkiller = {
-	Version = '2.1',
+	Version = '2.2',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
-		Window = UDim2.new(0, 456,0, 499),
+		Window = UDim2.new(0, 485,0, 565),
 		Mobile = UDim2.new(0, 450,0, 375),
 		TabOpen = 185,
 		TabClose = 85,
@@ -5443,7 +5443,7 @@ function Compkiller.new(Config : Window)
 	SelectionFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	SelectionFrame.BorderSizePixel = 0
 	SelectionFrame.Position = UDim2.new(1, 5, 0, 28)
-	SelectionFrame.Size = UDim2.new(0, 8, 0, 32)
+	SelectionFrame.Size = UDim2.new(0, 8, 0, 27)
 
 	table.insert(Compkiller.Elements.Highlight,{
 		Element = SelectionFrame,
