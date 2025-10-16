@@ -8049,10 +8049,8 @@ function Compkiller.new(Config : Window)
 				if IsOpen then
 					local FullScale = Section.AbsolutePosition.Y + UIListLayout.AbsoluteContentSize.Y;
 					local RefPos = Parent.AbsolutePosition.Y + Parent.AbsoluteSize.Y;
-					
+
 					if (Section:GetAttribute('Height') and not Compkiller:_IsMobile() and FullScale <= RefPos) then
-						print(Section:GetAttribute('Height'));
-						
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
 							Size = UDim2.new(1, 0, 0, math.abs(Section:GetAttribute('Height')) + 5)
 						});
@@ -8060,7 +8058,7 @@ function Compkiller.new(Config : Window)
 						Compkiller:_Animation(Section,TweenInfo.new(0.4,Enum.EasingStyle.Quint),{
 							Size = UDim2.new(1, 0, 0, math.abs(UIListLayout.AbsoluteContentSize.Y) - 1)
 						});
-						
+
 						if Section:GetAttribute('Lasth') and UIListLayout.AbsoluteContentSize.Y > Section:GetAttribute('Lasth') then
 							Section:SetAttribute('Lasth',math.abs(UIListLayout.AbsoluteContentSize.Y) - 1);
 						end;
@@ -8121,11 +8119,11 @@ function Compkiller.new(Config : Window)
 						end;
 
 						local remainingHeight = UIListLayout.AbsoluteContentSize.Y + (Parent.AbsoluteSize.Y - (parentScale));
-						
+
 						if Section:GetAttribute('Lasth') then
 							remainingHeight = math.max(remainingHeight , Section:GetAttribute('Lasth'));
 						end;
-						
+
 						Section:SetAttribute('Height',remainingHeight);
 						Section:SetAttribute('Lasth',remainingHeight);
 					end;
