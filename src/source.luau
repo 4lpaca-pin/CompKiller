@@ -4,7 +4,7 @@
     Author: 4lpaca
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
-    Version: 2.2
+    Version: 2.3
     Original: compkiller.net
 --]]
 
@@ -332,7 +332,7 @@ local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = cloneref(workspace.CurrentCamera);
 
 local Compkiller = {
-	Version = '2.2',
+	Version = '2.3',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -1607,7 +1607,7 @@ function Compkiller.__SIGNAL(default)
 	local Bindable = Instance.new('BindableEvent');
 
 	Bindable.Name = string.sub(tostring({}),7);
-
+	print(default)
 	Bindable:SetAttribute('Value',default);
 
 	local Binds = {
@@ -5479,6 +5479,42 @@ function Compkiller.new(Config : Window)
 	Userinfo.BorderSizePixel = 0
 	Userinfo.Position = UDim2.new(0, 0, 1, 0)
 	Userinfo.Size = UDim2.new(1, -25, 0, 60)
+	
+	do
+		local Highlight = Instance.new("Frame")
+		local UICorner = Instance.new("UICorner")
+
+		Highlight.Name = "Highlight"
+		Highlight.Parent = Userinfo
+		Highlight.AnchorPoint = Vector2.new(0.5, 0)
+		Highlight.BackgroundColor3 = Color3.fromRGB(161, 161, 161)
+		Highlight.BackgroundTransparency = 1
+		Highlight.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Highlight.BorderSizePixel = 0
+		Highlight.Position = UDim2.new(0.5, 0, 0, 4)
+		Highlight.Size = UDim2.new(1, -15, 1, -15)
+
+		UICorner.CornerRadius = UDim.new(0, 4)
+		UICorner.Parent = Highlight
+		
+		Userinfo.MouseEnter:Connect(function()
+			Compkiller:_Animation(Highlight,TweenInfo.new(0.2),{
+				BackgroundTransparency = 0.925
+			});
+		end);
+		
+		Userinfo.MouseLeave:Connect(function()
+			Compkiller:_Animation(Highlight,TweenInfo.new(0.2),{
+				BackgroundTransparency = 1
+			});
+		end);
+		
+		Compkiller:_Input(Userinfo,function()
+			if WindowArgs.UserSettings.Root then
+				WindowArgs.UserSettings:Window(true);
+			end;
+		end);
+	end;
 
 	UserProfile.Name = Compkiller:_RandomString()
 	UserProfile.Parent = Userinfo
@@ -5546,7 +5582,7 @@ function Compkiller.new(Config : Window)
 	if Compkiller:_IsMobile() then
 		Compkiller:_AddDragBlacklist(TabButtons);
 	end;
-
+	
 	WindowOpen:Connect(function(v)
 		if WindowArgs.PerformanceMode then
 			MainFrame.BackgroundTransparency = (v and 0) or 1;
@@ -5681,6 +5717,173 @@ function Compkiller.new(Config : Window)
 			});
 		end;
 	end);
+	
+	WindowArgs.UserSettings = {};
+	
+	do
+		local Signal = Compkiller.__SIGNAL(false);
+		
+		local UserSettings = Instance.new("Frame")
+		local UICorner = Instance.new("UICorner")
+		local SectionFrame = Instance.new("Frame")
+		local UICorner_2 = Instance.new("UICorner")
+		local UIListLayout = Instance.new("UIListLayout")
+		local Header = Instance.new("Frame")
+		local HeaderText = Instance.new("TextLabel")
+		local ImageLabel = Instance.new("ImageLabel")
+
+		UserSettings.Name = "UserSettings"
+		UserSettings.Parent = CompKiller;
+		UserSettings.BackgroundColor3 = Compkiller.Colors.BGDBColor;
+		UserSettings.BackgroundTransparency = 1
+		UserSettings.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		UserSettings.BorderSizePixel = 0
+		UserSettings.Position = UDim2.new(0, 50, 0, 50)
+		UserSettings.Size = UDim2.new(0, 235, 0, 300)
+		UserSettings.ZIndex = 65;
+		UserSettings.Visible = false;
+		
+		table.insert(Compkiller.Elements.BGDBColor,{
+			Element = UserSettings,
+			Property = 'BackgroundColor3'
+		});
+		
+		UICorner.CornerRadius = UDim.new(0, 4)
+		UICorner.Parent = UserSettings
+
+		SectionFrame.Name = "SectionFrame"
+		SectionFrame.Parent = UserSettings
+		SectionFrame.BackgroundColor3 = Compkiller.Colors.BGDBColor;
+		SectionFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		SectionFrame.BorderSizePixel = 0
+		SectionFrame.Position = UDim2.new(0, 0, 0, 45)
+		SectionFrame.Size = UDim2.new(1, 0, 1, -45)
+		SectionFrame.ZIndex = 66
+		
+		table.insert(Compkiller.Elements.BGDBColor,{
+			Element = SectionFrame,
+			Property = 'BackgroundColor3'
+		});
+
+		UICorner_2.CornerRadius = UDim.new(0, 4)
+		UICorner_2.Parent = SectionFrame
+
+		UIListLayout.Parent = SectionFrame
+		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.Padding = UDim.new(0, 5)
+
+		Header.Name = "Header"
+		Header.Parent = UserSettings
+		Header.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Header.BackgroundTransparency = 1.000
+		Header.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Header.BorderSizePixel = 0
+		Header.Size = UDim2.new(1, 0, 0, 45)
+		Header.ZIndex = 66
+
+		HeaderText.Name = "HeaderText"
+		HeaderText.Parent = Header
+		HeaderText.AnchorPoint = Vector2.new(0.5, 0.5)
+		HeaderText.BackgroundTransparency = 1.000
+		HeaderText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		HeaderText.BorderSizePixel = 0
+		HeaderText.Position = UDim2.new(0.5, 0, 0.5, 0)
+		HeaderText.Size = UDim2.new(0, 200, 0, 25)
+		HeaderText.ZIndex = 67
+		HeaderText.Font = Enum.Font.GothamMedium
+		HeaderText.Text = "User Settings"
+		HeaderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+		HeaderText.TextSize = 15.000
+		
+		table.insert(Compkiller.Elements.SwitchColor,{
+			Element = HeaderText,
+			Property = 'TextColor3'
+		});
+		
+		ImageLabel.Parent = Header
+		ImageLabel.AnchorPoint = Vector2.new(1, 0)
+		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BackgroundTransparency = 1.000
+		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel.BorderSizePixel = 0
+		ImageLabel.Position = UDim2.new(1, -5, 0, 5)
+		ImageLabel.Size = UDim2.new(0, 15, 0, 15)
+		ImageLabel.ZIndex = 67
+		ImageLabel.Image = "rbxassetid://10747384394"
+		ImageLabel.ImageTransparency = 0.500
+		
+		function WindowArgs.UserSettings:Create()
+			
+			WindowArgs.UserSettings.Root = UserSettings;
+			WindowArgs.UserSettings.Signal = Signal;
+			WindowArgs.UserSettings.Signal = Compkiller:_Blur(UserSettings,Signal);
+			
+			Compkiller:Drag(UserSettings , UserSettings, 0.15);
+			
+			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+				Compkiller:_Animation(UserSettings,TweenInfo.new(0.2),{
+					Size = UDim2.new(0, 235, 0, UIListLayout.AbsoluteContentSize.Y + 50)
+				})
+			end);
+			
+			UserSettings:GetPropertyChangedSignal('BackgroundTransparency'):Connect(function()
+				if UserSettings.BackgroundTransparency < 1 then
+					UserSettings.Visible = true;
+				else
+					UserSettings.Visible = false;
+				end;
+			end);
+			
+			function WindowArgs.UserSettings:Window(Value)
+				if Value then
+					Signal:Fire(true);
+					
+					Compkiller:_Animation(UserSettings,TweenInfo.new(0.2),{
+						BackgroundTransparency = 0.250,
+					});
+					
+					Compkiller:_Animation(SectionFrame,TweenInfo.new(0.2),{
+						BackgroundTransparency = 0,
+					});
+					
+					Compkiller:_Animation(HeaderText,TweenInfo.new(0.2),{
+						TextTransparency = 0,
+					});
+					
+					Compkiller:_Animation(ImageLabel,TweenInfo.new(0.2),{
+						ImageTransparency = 0.5,
+					});
+				else
+					Signal:Fire(false);
+					
+					Compkiller:_Animation(UserSettings,TweenInfo.new(0.2),{
+						BackgroundTransparency = 1,
+					});
+
+					Compkiller:_Animation(SectionFrame,TweenInfo.new(0.2),{
+						BackgroundTransparency = 1,
+					});
+
+					Compkiller:_Animation(HeaderText,TweenInfo.new(0.2),{
+						TextTransparency = 1,
+					});
+
+					Compkiller:_Animation(ImageLabel,TweenInfo.new(0.2),{
+						ImageTransparency = 1,
+					});
+				end;
+			end;
+			
+			Compkiller:_Input(ImageLabel,function()
+				WindowArgs.UserSettings:Window(false);
+			end);
+			
+			WindowArgs.UserSettings:Window(false);
+			
+			return Compkiller:_LoadElement(SectionFrame , true , Signal);
+		end;
+	end;
 
 	function WindowArgs:DrawCategory(config : Category)
 		config = config or {};
@@ -5984,7 +6187,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 15, 0.5, 0),
-					Size = UDim2.new(0, 17, 0, 17),
+					Size = UDim2.new(0, 16, 0, 16),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6011,7 +6214,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 12, 0.5, 0),
-					Size = UDim2.new(0, 18, 0, 18),
+					Size = UDim2.new(0, 16, 0, 16),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6860,7 +7063,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 15, 0.5, 0),
-					Size = UDim2.new(0, 17, 0, 17),
+					Size = UDim2.new(0, 16, 0, 16),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -6887,7 +7090,7 @@ function Compkiller.new(Config : Window)
 
 				Compkiller:_Animation(Icon,Tween,{
 					Position = UDim2.new(0, 12, 0.5, 0),
-					Size = UDim2.new(0, 18, 0, 18),
+					Size = UDim2.new(0, 16, 0, 16),
 				});
 
 				Compkiller:_Animation(TabNameLabel,Tween,{
@@ -7795,7 +7998,7 @@ function Compkiller.new(Config : Window)
 
 					Compkiller:_Animation(Icon,Tween,{
 						Position = UDim2.new(0, 15, 0.5, 0),
-						Size = UDim2.new(0, 17, 0, 17),
+						Size = UDim2.new(0, 16, 0, 16),
 					});
 
 					Compkiller:_Animation(TabNameLabel,Tween,{
@@ -7822,7 +8025,7 @@ function Compkiller.new(Config : Window)
 
 					Compkiller:_Animation(Icon,Tween,{
 						Position = UDim2.new(0, 12, 0.5, 0),
-						Size = UDim2.new(0, 18, 0, 18),
+						Size = UDim2.new(0, 16, 0, 16),
 					});
 
 					Compkiller:_Animation(TabNameLabel,Tween,{
@@ -8192,6 +8395,18 @@ function Compkiller.new(Config : Window)
 
 				refreshScale();
 			end);
+			
+			Header.MouseEnter:Connect(function()
+				Compkiller:_Animation(SectionText,TweenInfo.new(0.2),{
+					TextTransparency = 0.25
+				})
+			end)	
+			
+			Header.MouseLeave:Connect(function()
+				Compkiller:_Animation(SectionText,TweenInfo.new(0.2),{
+					TextTransparency = 0.500
+				})
+			end)
 
 			return Compkiller:_LoadElement(Section , true , TabOpenSignal)
 		end;
@@ -8527,6 +8742,10 @@ function Compkiller.new(Config : Window)
 				WindowArgs:_ToggleUI()
 			end;
 		end);
+	end;
+	
+	function WindowArgs:SetMenuKey(new: string | Enum.KeyCode)
+		Config.Keybind = new;
 	end;
 
 	function WindowArgs:Update(config: WindowUpdate)
@@ -9078,17 +9297,18 @@ function Compkiller.newNotify()
 			BlockFrame.Name = Compkiller:_RandomString()
 			BlockFrame.Parent = NotifyContainer
 			BlockFrame.AnchorPoint = Vector2.new(1, 0)
-			BlockFrame.BackgroundColor3 = Color3.fromRGB(22, 24, 29)
+			BlockFrame.BackgroundColor3 = Compkiller.Colors.BGDBColor
 			BlockFrame.BackgroundTransparency = 1.000
 			BlockFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			BlockFrame.BorderSizePixel = 0
 			BlockFrame.ClipsDescendants = false
 			BlockFrame.Size = UDim2.new(0, 200, 0, 0)
 			BlockFrame.LayoutOrder = LayoutREF;
-
+			
+			
 			NotifyFrame.Name = Compkiller:_RandomString()
 			NotifyFrame.Parent = BlockFrame
-			NotifyFrame.BackgroundColor3 = Color3.fromRGB(22, 24, 29)
+			NotifyFrame.BackgroundColor3 = Compkiller.Colors.BGDBColor
 			NotifyFrame.BackgroundTransparency = 0.100
 			NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			NotifyFrame.BorderSizePixel = 0
@@ -9096,7 +9316,8 @@ function Compkiller.newNotify()
 			NotifyFrame.Size = UDim2.new(1, 0, 1, -5)
 			NotifyFrame.ZIndex = 2
 			NotifyFrame.Position = UDim2.new(1,200,0,0)
-
+			
+			
 			UICorner.CornerRadius = UDim.new(0, 4)
 			UICorner.Parent = NotifyFrame
 
