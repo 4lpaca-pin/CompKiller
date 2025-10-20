@@ -10,11 +10,6 @@ local Compkiller = loadstring(game:HttpGet("https://raw.githubusercontent.com/4l
 local Notifier = Compkiller.newNotify();
 ```
 
-## Loading UI
-```lua
-Compkiller:Loader("rbxassetid://120245531583106" , 1.5).yield();
-```
-
 ### Send Notification
 ```lua
 Notifier.new({
@@ -23,6 +18,11 @@ Notifier.new({
 	Duration = 10,
 	Icon = "rbxassetid://120245531583106"
 });
+```
+
+## Loading UI
+```lua
+Compkiller:Loader("rbxassetid://120245531583106" , 1.5).yield();
 ```
 
 ## Creating Window
