@@ -8,6 +8,7 @@
 
 local Compkiller = loadstring(game:HttpGet("https://raw.githubusercontent.com/4lpaca-pin/CompKiller/refs/heads/main/src/source.luau"))();
 
+
 -- Create Notification --
 local Notifier = Compkiller.newNotify();
 
@@ -18,15 +19,75 @@ local ConfigManager = Compkiller:ConfigManager({
 });
 
 -- Loading UI (Icon <string> , Duration <number>) --
-Compkiller:Loader("rbxassetid://120245531583106" , 2.5).yield();
+Compkiller:Loader("rbxassetid://120245531583106" , 1.5).yield();
 
 -- Creating Window --
+local MenuKey = "LeftAlt";
+
 local Window = Compkiller.new({
 	Name = "COMPKILLER",
-	Keybind = "LeftAlt",
+	Keybind = MenuKey,
 	Logo = "rbxassetid://120245531583106",
 	Scale = Compkiller.Scale.Window, -- Leave blank if you want automatic scale [PC, Mobile].
 	TextSize = 15,
+});
+
+-- User Setting --
+
+local UserSettings = Window.UserSettings:Create();
+
+UserSettings:AddColorPicker({
+	Name = "Menu Color",
+	Default = Compkiller.Colors.Highlight,
+	Callback = function(f)
+		Compkiller.Colors.Highlight = f;
+		
+		Compkiller:RefreshCurrentColor();
+	end,
+});
+
+UserSettings:AddKeybind({
+	Name = "Menu Key",
+	Default = MenuKey,
+	Callback = function(f)
+		MenuKey = f;
+		
+		Window:SetMenuKey(MenuKey)
+	end,
+});
+
+UserSettings:AddDropdown({
+	Name = "Menu Language",
+	Values = {"English","Russian","Chinese"},
+	Default = "English",
+	Callback = print
+});
+
+UserSettings:AddDropdown({
+	Name = "Menu Theme",
+	Values = {
+		"Default",
+		"Dark Green",
+		"Dark Blue",
+		"Purple Rose",
+		"Skeet"
+	},
+	
+	Default = "Default",
+	
+	Callback = function(f)
+		Compkiller:SetTheme(f)
+	end,
+});
+
+UserSettings:AddDropdown({
+	Name = "Visible Widgets",
+	Values = {"Watermark","Keybinds","Double Tab"},
+	Multi = true,
+	Default = {"Watermark"},
+	Callback = function(f)
+		print(f)
+	end,
 });
 
 -- Notification --
@@ -359,7 +420,7 @@ Settings:AddColorPicker({
 	Default = Compkiller.Colors.Toggle,
 	Callback = function(v)
 		Compkiller.Colors.Toggle = v;
-		
+
 		Compkiller:RefreshCurrentColor(v);
 	end,
 });
@@ -468,7 +529,7 @@ Settings:AddButton({
 	Name = "Get Theme",
 	Callback = function()
 		print(Compkiller:GetTheme())
-		
+
 		Notifier.new({
 			Title = "Notification",
 			Content = "Copied Them Color to your clipboard",
