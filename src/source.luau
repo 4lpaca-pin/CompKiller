@@ -8476,6 +8476,8 @@ function Compkiller.new(Config : Window)
 		end;
 
 		function WindowArgs:Watermark()
+			local Signal = Compkiller.__SIGNAL(true);
+			
 			local Watermark = Instance.new("Frame")
 			local UICorner = Instance.new("UICorner")
 			local Logo = Instance.new("Frame")
@@ -8489,7 +8491,9 @@ function Compkiller.new(Config : Window)
 			Watermark.Parent = CompKiller
 			Watermark.AnchorPoint = Vector2.new(1, 0)
 			Watermark.BackgroundColor3 = Compkiller.Colors.BGDBColor
-
+			
+			Compkiller:Drag(Watermark , Watermark, 0.1);
+			
 			table.insert(Compkiller.Elements.BGDBColor,{
 				Element = Watermark,
 				Property = 'BackgroundColor3'
@@ -8501,18 +8505,6 @@ function Compkiller.new(Config : Window)
 			Watermark.Position = UDim2.new(1, -10, 0, 10)
 			Watermark.Size = UDim2.new(0, 45, 0, 23)
 			Watermark.ZIndex = 150
-
-			ImageLabel:GetPropertyChangedSignal('ClipsDescendants'):Connect(function()
-				if ImageLabel.ClipsDescendants then
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(1, -60, 0, 10)
-					})
-				else
-					Compkiller:_Animation(Watermark , TweenInfo.new(0.2),{
-						Position = UDim2.new(1, -10, 0, 10)
-					})
-				end;
-			end)
 
 			UICorner.CornerRadius = UDim.new(0, 3)
 			UICorner.Parent = Watermark
@@ -8592,7 +8584,7 @@ function Compkiller.new(Config : Window)
 			BackFrame.Position = UDim2.new(1, 0, 0.5, 0)
 			BackFrame.Size = UDim2.new(1, 30, 1, 0)
 
-			Compkiller:_Blur(BackFrame,WindowOpen);
+			Compkiller:_Blur(BackFrame,Signal);
 
 			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 				Compkiller:_Animation(Watermark,TweenInfo.new(0.4),{
@@ -8795,7 +8787,10 @@ function Compkiller.new(Config : Window)
 		MovementFrame.ZIndex = 9
 
 		Compkiller:Drag(MovementFrame,MainFrame,0.1)
-
+		
+		SelectionFrame.Position = UDim2.new(1, 5, 0, 28)
+		SelectionFrame.Size = UDim2.new(0, 8, 0, 22)
+		
 		table.insert(Compkiller.Elements.Highlight,{
 			Element = SelectionFrame,
 			Property = "BackgroundColor3"
@@ -8808,7 +8803,7 @@ function Compkiller.new(Config : Window)
 			SelectionFrame.BackgroundColor3 = Compkiller.Colors.Highlight;
 
 			if WindowArgs.SelectedTab and WindowArgs.IsOpen then
-				local vili = -(TabButtons.AbsolutePosition.Y - WindowArgs.SelectedTab.AbsolutePosition.Y) + 2;
+				local vili = -(TabButtons.AbsolutePosition.Y - WindowArgs.SelectedTab.AbsolutePosition.Y) + 4;
 				local distance = (SelectionFrame.Position.Y.Offset - vili);
 
 				if vili < 0 or vili > TabButtons.AbsoluteSize.Y then
@@ -9164,7 +9159,7 @@ function Compkiller:Loader(IconId,Duration)
 	Icon.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Icon.Size = UDim2.new(0, 750, 0, 750)
 	Icon.ZIndex = 100
-	Icon.Image = IconId or "rbxassetid://120245531583106"
+	Icon.Image = IconId or Compkiller.Logo;
 	Icon.ImageTransparency = 1
 
 	Vignette.Name = Compkiller:_RandomString()
