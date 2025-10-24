@@ -10,7 +10,7 @@
         Version: 2.4
     - Fixed some bug
     - Added Secure mode > Compkiller:Security("Cache-Directory")
-        Secure mode: this will cache all images to your workspace
+        Secure mode: this will cache all images to your workspace and disabled blur
 --]]
 
 --- Export Types ---
@@ -1481,6 +1481,10 @@ function Compkiller:GetCalculatePosition(planePos: number, planeNormal: number, 
 end;
 
 function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
+    if Compkiller.SecureMode then
+        return game.Changed:Connect(function() end);
+    end;
+
 	local Part = Instance.new('Part',Compkiller.ArcylicParent);
 	local DepthOfField = Instance.new('DepthOfFieldEffect',cloneref(game:GetService('Lighting')));
 	local BlockMesh = Instance.new("BlockMesh");
@@ -1508,7 +1512,33 @@ function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
 
 	Part.Name = Compkiller:_RandomString();
 
+    local disconnect;
+
 	local UpdateFunction = function()
+        if Compkiller.SecureMode then
+            if Part then
+                Part:Destroy();
+                Part = nil;
+            end;
+
+            if DepthOfField then
+                DepthOfField:Destroy();
+                DepthOfField = nil;
+            end;
+
+            if BlockMesh then
+                BlockMesh:Destroy();
+                BlockMesh = nil;
+            end;
+
+            if disconnect then
+                disconnect();
+                disconnect = nil;
+            end;
+
+            return;
+        end;
+
 		local IsWindowActive = WindowRemote:GetValue();
 
 		if IsWindowActive then
@@ -1573,13 +1603,15 @@ function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
 		end;
 	end);
 
-	element.Destroying:Connect(function()
+    disconnect = function()
 		rbxsignal:Disconnect();
 		loopThread:Disconnect();
 		task.cancel(THREAD);
 		Part:Destroy();
 		DepthOfField:Destroy();
-	end);
+	end;
+
+	element.Destroying:Connect(disconnect);
 
 	return rbxsignal;
 end;
@@ -2423,14 +2455,10 @@ function Compkiller:CacheImage(id: string) : string
 
 		writefile(cache_path , game:HttpGet(en));
 
-        warn('created file:' , JSON_Decode.data[1].imageUrl);
-
 		task.wait();
 
 		return getcustomasset(cache_path);
 	end;
-
-    warn('failed to get id:',json);
 
 	return "";
 end;
@@ -2502,10 +2530,12 @@ function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color:
 
 	UIStroke.Color = Compkiller.Colors.HighStrokeColor
 	UIStroke.Parent = ColorPickerWindow
+
 	table.insert(Compkiller.Elements.HighStrokeColor , {
 		Element = UIStroke,
 		Property = "Color"
 	})
+
 	UICorner.CornerRadius = UDim.new(0, 6)
 	UICorner.Parent = ColorPickerWindow
 
