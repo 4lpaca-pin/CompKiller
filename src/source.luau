@@ -2356,6 +2356,59 @@ function Compkiller:_CreateBlock(Signal)
 	return rep;
 end;
 
+Compkiller.Hash = function(str: string)
+	local hex = #str;
+
+	string.gsub(str,'.',function(byte)
+		hex += byte:byte() + #str;
+	end);
+
+	return tostring(math.round(hex + 15));
+end;
+
+function Compkiller:CacheImage(id: string) : string
+	assert(Compkiller.SecureMode , "please use Compkiller:Security(< string >) before cache image")
+	assert(Compkiller.CacheDirectory , "please use Compkiller:Security(< string >) before cache image")
+	
+	local id = string.match(id , "%d+");
+	
+	local Hash = Compkiller.Hash(id);
+	
+	local cache_path = string.format("%s/cache-%s.png" ,Compkiller.CacheDirectory , Hash);
+	
+	if isfile(cache_path) then
+		return getcustomasset(cache_path);
+	end;
+	
+	local endpoint = string.format("https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=420x420&format=Png&isCircular=false" , id);
+
+	local json = game:HttpGet(endpoint);
+	
+	local JSON_Decode = select(2, pcall(function()
+		return HttpService:JSONDecode(json);
+	end));
+	
+	if typeof(JSON_Decode) == "table" and JSON_Decode.data[0] and JSON_Decode.data[0].imageUrl and JSON_Decode.data[0].state == "Completed" then task.wait()
+		local en = JSON_Decode.data[0].imageUrl;
+		
+		writefile(cache_path , game:HttpGet(en));
+		
+		task.wait();
+		
+		return getcustomasset(cache_path);
+	end;
+	
+	return "";
+end;
+
+function Compkiller:Security(directory: string) -- Security Mode
+	directory = directory or "Compkiller-Cache";
+	
+	Compkiller.SecureMode = true;
+
+	Compkiller.CacheDirectory = directory;
+end;
+
 function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color: Color3) -> any?)
 	local Window = Compkiller:_GetWindowFromElement(Button);
 	local BaseZ_Index = math.random(1,15) * 100;
@@ -8477,7 +8530,7 @@ function Compkiller.new(Config : Window)
 
 		function WindowArgs:Watermark()
 			local Signal = Compkiller.__SIGNAL(true);
-			
+
 			local Watermark = Instance.new("Frame")
 			local UICorner = Instance.new("UICorner")
 			local Logo = Instance.new("Frame")
@@ -8491,9 +8544,9 @@ function Compkiller.new(Config : Window)
 			Watermark.Parent = CompKiller
 			Watermark.AnchorPoint = Vector2.new(1, 0)
 			Watermark.BackgroundColor3 = Compkiller.Colors.BGDBColor
-			
+
 			Compkiller:Drag(Watermark , Watermark, 0.1);
-			
+
 			table.insert(Compkiller.Elements.BGDBColor,{
 				Element = Watermark,
 				Property = 'BackgroundColor3'
@@ -8787,10 +8840,10 @@ function Compkiller.new(Config : Window)
 		MovementFrame.ZIndex = 9
 
 		Compkiller:Drag(MovementFrame,MainFrame,0.1)
-		
+
 		SelectionFrame.Position = UDim2.new(1, 5, 0, 28)
 		SelectionFrame.Size = UDim2.new(0, 8, 0, 22)
-		
+
 		table.insert(Compkiller.Elements.Highlight,{
 			Element = SelectionFrame,
 			Property = "BackgroundColor3"
