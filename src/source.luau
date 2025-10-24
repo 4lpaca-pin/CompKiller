@@ -4,8 +4,13 @@
     Author: 4lpaca
     License: MIT
     Github: https://github.com/4lpaca-pin/CompKiller
-    Version: 2.3
+    Version: 2.4
     Original: compkiller.net
+
+        Version: 2.4
+    - Fixed some bug
+    - Added Secure mode > Compkiller:Security("Cache-Directory")
+        Secure mode: this will cache all images to your workspace
 --]]
 
 --- Export Types ---
@@ -327,12 +332,12 @@ local RunService: RunService = cloneref(game:GetService('RunService'));
 local Players: Players = cloneref(game:GetService('Players'));
 local HttpService: HttpService = cloneref(game:GetService('HttpService'));
 local LocalPlayer: Player = Players.LocalPlayer;
-local CoreGui: PlayerGui = (gethui and gethui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
+local CoreGui: PlayerGui = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or cloneref(game:FindFirstChild('CoreGui')) or cloneref(LocalPlayer.PlayerGui);
 local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = cloneref(workspace.CurrentCamera);
 
 local Compkiller = {
-	Version = '2.3',
+	Version = '2.4',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -1393,6 +1398,25 @@ Compkiller.FontAwesome = {
 };
 
 function Compkiller:_GetIcon(name : string , font_aws) : string
+	
+	if Compkiller.SecureMode then
+		local AssetId;
+		
+        if font_aws then
+            AssetId = Compkiller.FontAwesome[name] or name;
+        else
+            AssetId = Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
+        end;
+
+        if AssetId then
+            local asset = Compkiller:CacheImage(AssetId);
+		
+            return asset;	
+        end;	
+
+        return "";
+	end;
+	
 	if font_aws then
 		return Compkiller.FontAwesome[name] or name;
 	end;
@@ -2086,7 +2110,7 @@ function Compkiller:_AddLinkValue(Name , Default , GlobalBlock , LinkValues , re
 		InfoButton.LayoutOrder = -#LinkValues:GetChildren();
 		InfoButton.Size = UDim2.new(0, 15, 0, 15)
 		InfoButton.ZIndex = GlobalBlock.ZIndex + 25
-		InfoButton.Image = "rbxassetid://10723415903"
+		InfoButton.Image = Compkiller:CacheImage("rbxassetid://10723415903")
 		InfoButton.ImageTransparency = 0.500
 
 		UICorner.CornerRadius = UDim.new(1, 0)
@@ -2173,7 +2197,7 @@ function Compkiller:_AddLinkValue(Name , Default , GlobalBlock , LinkValues , re
 		OptionButton.BorderSizePixel = 0
 		OptionButton.Size = UDim2.new(0, 15, 0, 15)
 		OptionButton.ZIndex = GlobalBlock.ZIndex + 2
-		OptionButton.Image = "rbxassetid://14007344336"
+		OptionButton.Image = Compkiller:CacheImage("rbxassetid://14007344336")
 		OptionButton.ImageTransparency = 0.500
 		OptionButton.LayoutOrder = -#LinkValues:GetChildren();
 
@@ -2363,47 +2387,61 @@ Compkiller.Hash = function(str: string)
 		hex += byte:byte() + #str;
 	end);
 
-	return tostring(math.round(hex + 15));
+    local dh = string.match(str,'%d+');
+
+	return "ck-"..tostring(math.round(hex + 15))..tostring(dh);
 end;
 
 function Compkiller:CacheImage(id: string) : string
+    if not Compkiller.SecureMode then
+        return id;
+    end;
+
 	assert(Compkiller.SecureMode , "please use Compkiller:Security(< string >) before cache image")
 	assert(Compkiller.CacheDirectory , "please use Compkiller:Security(< string >) before cache image")
-	
+
 	local id = string.match(id , "%d+");
-	
+
 	local Hash = Compkiller.Hash(id);
-	
+
 	local cache_path = string.format("%s/cache-%s.png" ,Compkiller.CacheDirectory , Hash);
-	
+
 	if isfile(cache_path) then
 		return getcustomasset(cache_path);
 	end;
-	
-	local endpoint = string.format("https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=420x420&format=Png&isCircular=false" , id);
+
+	local endpoint = string.format("https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=150x150&format=Png&isCircular=false" , id);
 
 	local json = game:HttpGet(endpoint);
-	
+
 	local JSON_Decode = select(2, pcall(function()
 		return HttpService:JSONDecode(json);
 	end));
-	
-	if typeof(JSON_Decode) == "table" and JSON_Decode.data[0] and JSON_Decode.data[0].imageUrl and JSON_Decode.data[0].state == "Completed" then task.wait()
-		local en = JSON_Decode.data[0].imageUrl;
-		
+
+	if typeof(JSON_Decode) == "table" and JSON_Decode.data[1] and JSON_Decode.data[1].imageUrl and JSON_Decode.data[1].state == "Completed" then task.wait()
+		local en = JSON_Decode.data[1].imageUrl;
+
 		writefile(cache_path , game:HttpGet(en));
-		
+
+        warn('created file:' , JSON_Decode.data[1].imageUrl);
+
 		task.wait();
-		
+
 		return getcustomasset(cache_path);
 	end;
-	
+
+    warn('failed to get id:',json);
+
 	return "";
 end;
 
 function Compkiller:Security(directory: string) -- Security Mode
 	directory = directory or "Compkiller-Cache";
-	
+
+    if not isfolder(directory) then
+        makefolder(directory);
+    end;
+
 	Compkiller.SecureMode = true;
 
 	Compkiller.CacheDirectory = directory;
@@ -2479,7 +2517,7 @@ function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color:
 	ColorPickBox.Position = UDim2.new(0, 7, 0, 7)
 	ColorPickBox.Size = UDim2.new(0, 145, 0, 145)
 	ColorPickBox.ZIndex = BaseZ_Index + 1
-	ColorPickBox.Image = "http://www.roblox.com/asset/?id=112554223509763"
+	ColorPickBox.Image = Compkiller:CacheImage("http://www.roblox.com/asset/?id=112554223509763");
 
 	MouseMovement.Name = Compkiller:_RandomString()
 	MouseMovement.Parent = ColorPickBox
@@ -2491,7 +2529,7 @@ function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color:
 	MouseMovement.Size = UDim2.new(0, 12, 0, 12)
 	MouseMovement.ZIndex = BaseZ_Index + 5
 	MouseMovement.AnchorPoint = Vector2.new(0.5,0.5)
-	MouseMovement.Image = "rbxassetid://4805639000"
+	MouseMovement.Image = Compkiller:CacheImage("rbxassetid://4805639000")
 
 	UICorner_2.CornerRadius = UDim.new(0, 2)
 	UICorner_2.Parent = ColorPickBox
@@ -2609,7 +2647,7 @@ function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color:
 	TransparentImage.BorderSizePixel = 0
 	TransparentImage.Size = UDim2.new(1, 0, 1, 0)
 	TransparentImage.ZIndex = BaseZ_Index + 5
-	TransparentImage.Image = "rbxassetid://6198493000"
+	TransparentImage.Image = Compkiller:CacheImage("rbxassetid://6198493000")
 	TransparentImage.ImageColor3 = Color3.fromRGB(206, 206, 206)
 	TransparentImage.ScaleType = Enum.ScaleType.Crop
 
@@ -5005,7 +5043,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 		MainButton.Position = UDim2.new(1, -5, 0.5, 0)
 		MainButton.Size = UDim2.new(0, 13, 0, 13)
 		MainButton.ZIndex = Zindex + 5
-		MainButton.Image = "rbxassetid://10709790948"
+		MainButton.Image = Compkiller:CacheImage("rbxassetid://10709790948")
 
 		Compkiller:_Hover(ValueItems,function()
 			Compkiller:_Animation(ValueItems,TweenInfo.new(0.3),{
@@ -5577,7 +5615,7 @@ function Compkiller.new(Config : Window)
 	UserProfile.Position = UDim2.new(0, 13, 0, 9)
 	UserProfile.Size = UDim2.new(0, 35, 0, 35)
 	UserProfile.ZIndex = 2
-	UserProfile.Image = "rbxassetid://18518299306"
+	UserProfile.Image = Compkiller:CacheImage("rbxassetid://18518299306")
 
 	UICorner_4.CornerRadius = UDim.new(1, 0)
 	UICorner_4.Parent = UserProfile
@@ -5863,7 +5901,7 @@ function Compkiller.new(Config : Window)
 		ImageLabel.Position = UDim2.new(1, -5, 0, 5)
 		ImageLabel.Size = UDim2.new(0, 15, 0, 15)
 		ImageLabel.ZIndex = 67
-		ImageLabel.Image = "rbxassetid://10747384394"
+		ImageLabel.Image = Compkiller:CacheImage("rbxassetid://10747384394")
 		ImageLabel.ImageTransparency = 0.500
 
 		function WindowArgs.UserSettings:Create()
@@ -5937,6 +5975,10 @@ function Compkiller.new(Config : Window)
 			return Compkiller:_LoadElement(SectionFrame , true , Signal);
 		end;
 	end;
+
+    function WindowArgs:SetVisible(bool: boolean)
+        CompKiller.Enabled = bool;
+    end;
 
 	function WindowArgs:DrawCategory(config : Category)
 		config = config or {};
@@ -6691,7 +6733,7 @@ function Compkiller.new(Config : Window)
 		SectionClose.Position = UDim2.new(1, -12, 0.5, 0)
 		SectionClose.Size = UDim2.new(0, 17, 0, 17)
 		SectionClose.ZIndex = 10
-		SectionClose.Image = "rbxassetid://10709790948"
+		SectionClose.Image = Compkiller:CacheImage("rbxassetid://10709790948")
 		SectionClose.ImageTransparency = 0.500
 
 		ScrollingFrame.Parent = ConfigList
@@ -6781,7 +6823,7 @@ function Compkiller.new(Config : Window)
 		SectionClose_2.Position = UDim2.new(1, -12, 0.5, 0)
 		SectionClose_2.Size = UDim2.new(0, 17, 0, 17)
 		SectionClose_2.ZIndex = 10
-		SectionClose_2.Image = "rbxassetid://10709790948"
+		SectionClose_2.Image = Compkiller:CacheImage("rbxassetid://10709790948")
 		SectionClose_2.ImageTransparency = 0.500
 
 		Frame.Parent = AddConfig
@@ -7198,7 +7240,7 @@ function Compkiller.new(Config : Window)
 			DelButton.LayoutOrder = -9999
 			DelButton.Size = UDim2.new(0, 35, 0, 15)
 			DelButton.ZIndex = 14
-			DelButton.Image = "rbxassetid://10747362393"
+			DelButton.Image = Compkiller:CacheImage("rbxassetid://10747362393")
 			DelButton.ImageColor3 = Color3.fromRGB(255, 107, 107)
 			DelButton.ImageTransparency = 0.500
 			DelButton.ScaleType = Enum.ScaleType.Fit
@@ -7395,7 +7437,7 @@ function Compkiller.new(Config : Window)
 			Icon_2.Size = UDim2.new(0.699999988, 0, 0.699999988, 0)
 			Icon_2.SizeConstraint = Enum.SizeConstraint.RelativeYY
 			Icon_2.ZIndex = 15
-			Icon_2.Image = "rbxassetid://10723344270"
+			Icon_2.Image = Compkiller:CacheImage("rbxassetid://10723344270")
 			Icon_2.ImageTransparency = 1
 			UIStroke_3.Transparency = 1
 
@@ -8274,7 +8316,7 @@ function Compkiller.new(Config : Window)
 			SectionClose.Position = UDim2.new(1, -12, 0.5, 0)
 			SectionClose.Size = UDim2.new(0, 17, 0, 17)
 			SectionClose.ZIndex = 10
-			SectionClose.Image = "rbxassetid://10709790948"
+			SectionClose.Image = Compkiller:CacheImage("rbxassetid://10709790948")
 			SectionClose.ImageTransparency = 0.500
 
 			if not SectionText.Text:byte() then
@@ -8795,6 +8837,10 @@ function Compkiller.new(Config : Window)
 		config.WindowName = config.WindowName or Config.Name;
 		config.UserProfile = config.UserProfile or WindowArgs.Profile or string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=150&h=150",tostring(LocalPlayer.UserId));
 
+        if Compkiller.SecureMode then
+            config.UserProfile = Compkiller:_GetIcon("user");
+        end;
+
 		UserText.Text = config.Username;
 		CompLogo.Image = config.Logo;
 		ExpireText.Text = config.ExpireDate;
@@ -9221,7 +9267,7 @@ function Compkiller:Loader(IconId,Duration)
 	Vignette.BorderColor3 = Color3.fromRGB(27, 42, 53)
 	Vignette.BorderSizePixel = 0
 	Vignette.Size = UDim2.new(1, 0, 1, 0)
-	Vignette.Image = "rbxassetid://18720640102"
+	Vignette.Image = Compkiller:CacheImage("rbxassetid://18720640102")
 	Vignette.ImageColor3 = Compkiller.Colors.Highlight
 	Vignette.ImageTransparency = 1
 	Vignette.AnchorPoint = Vector2.new(0.5,0.5)
@@ -9293,7 +9339,7 @@ function Compkiller.newNotify()
 	local UIListLayout = Instance.new("UIListLayout")
 
 	Notification.Name = Compkiller:_RandomString()
-	Notification.Parent = CoreGui
+	Notification.Parent = CoreGui;
 	Notification.ResetOnSpawn = false
 	Notification.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
