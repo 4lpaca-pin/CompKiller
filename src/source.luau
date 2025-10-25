@@ -8867,7 +8867,7 @@ function Compkiller.new(Config : Window)
 		config.WindowName = config.WindowName or Config.Name;
 		config.UserProfile = config.UserProfile or WindowArgs.Profile or string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=150&h=150",tostring(LocalPlayer.UserId));
 
-        if Compkiller.SecureMode then
+        if Compkiller.SecureMode and string.find(config.UserProfile, "rbxassetid://",1,true) then
             config.UserProfile = Compkiller:_GetIcon("user");
         end;
 
