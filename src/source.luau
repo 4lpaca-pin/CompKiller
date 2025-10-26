@@ -2413,6 +2413,10 @@ function Compkiller:_CreateBlock(Signal)
 end;
 
 Compkiller.Hash = function(str: string)
+	if typeof(str) ~= "string" then
+		return "ck-unknow";
+	end;
+
 	local hex = #str;
 
 	string.gsub(str,'.',function(byte)
@@ -2425,6 +2429,10 @@ Compkiller.Hash = function(str: string)
 end;
 
 function Compkiller:CacheImage(id: string) : string
+	if not id then
+		return "";
+	end;
+
     if not Compkiller.SecureMode then
         return id;
     end;
