@@ -2429,7 +2429,7 @@ Compkiller.Hash = function(str: string)
 end;
 
 function Compkiller:CacheImage(id: string) : string
-	if not id then
+	if not id or id == nil then
 		return "";
 	end;
 
