@@ -1398,7 +1398,6 @@ Compkiller.FontAwesome = {
 };
 
 function Compkiller:_GetIcon(name : string , font_aws) : string
-	
 	if Compkiller.SecureMode then
 		local AssetId;
 		
@@ -1408,9 +1407,9 @@ function Compkiller:_GetIcon(name : string , font_aws) : string
             AssetId = Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
         end;
 
-        if AssetId then
+        if AssetId and AssetId ~= nil then
             local asset = Compkiller:CacheImage(AssetId);
-		
+			
             return asset;	
         end;	
 
@@ -2429,18 +2428,14 @@ Compkiller.Hash = function(str: string)
 end;
 
 function Compkiller:CacheImage(id: string) : string
-	if not id or id == nil then
-		return "";
-	end;
-
-    if not Compkiller.SecureMode then
-        return id;
+    if not Compkiller.SecureMode or not id or not id:byte() then
+        return "";
     end;
 
 	assert(Compkiller.SecureMode , "please use Compkiller:Security(< string >) before cache image")
 	assert(Compkiller.CacheDirectory , "please use Compkiller:Security(< string >) before cache image")
 
-	local id = string.match(id , "%d+");
+	local ids = string.match(id , "%d+");
 
 	local Hash = Compkiller.Hash(id);
 
@@ -2450,7 +2445,7 @@ function Compkiller:CacheImage(id: string) : string
 		return getcustomasset(cache_path);
 	end;
 
-	local endpoint = string.format("https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=150x150&format=Png&isCircular=false" , id);
+	local endpoint = string.format("https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=150x150&format=Png&isCircular=false" , ids);
 
 	local json = game:HttpGet(endpoint);
 
@@ -7704,7 +7699,7 @@ function Compkiller.new(Config : Window)
 					Button.OnLoad = function()
 						WindowArgs.Notify.new({
 							Title = "Configs",
-							Icon = Compkiller:_GetIcon(Config.Logo),
+							Icon = Compkiller:CacheImage(Config.Logo),
 							Content = "Load config \""..v.Name.."\""
 						})
 
@@ -7714,7 +7709,7 @@ function Compkiller.new(Config : Window)
 					Button.OnSave = function()
 						WindowArgs.Notify.new({
 							Title = "Configs",
-							Icon = Compkiller:_GetIcon(Config.Logo),
+							Icon = Compkiller:CacheImage(Config.Logo),
 							Content = "Save config \""..v.Name.."\""
 						})
 
@@ -7729,7 +7724,7 @@ function Compkiller.new(Config : Window)
 					Button.OnDelete = function()
 						WindowArgs.Notify.new({
 							Title = "Configs",
-							Icon = Compkiller:_GetIcon(Config.Logo),
+							Icon = Compkiller:CacheImage(Config.Logo),
 							Content = "Delete config \""..v.Name.."\""
 						})
 
