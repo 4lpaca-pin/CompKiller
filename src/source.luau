@@ -9451,7 +9451,12 @@ function Compkiller.newNotify()
 			CompLogo.Position = UDim2.new(0, 6, 0, 6)
 			CompLogo.Size = UDim2.new(0, 25, 0, 25)
 			CompLogo.ZIndex = 4
-			CompLogo.Image = Compkiller:_GetIcon(Notify.Icon);
+
+			if string.find(Notify.Icon,'ck-',1,true) then	
+				CompLogo.Image = Notify.Icon;
+			else
+				CompLogo.Image = Compkiller:_GetIcon(Notify.Icon);
+			end;
 
 			Header.Name = Compkiller:_RandomString()
 			Header.Parent = NotifyFrame
