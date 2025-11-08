@@ -9452,7 +9452,7 @@ function Compkiller.newNotify()
 			CompLogo.Size = UDim2.new(0, 25, 0, 25)
 			CompLogo.ZIndex = 4
 
-			if string.find(Notify.Icon,'ck-',1,true) then	
+			if string.find(Notify.Icon,'cache-ck-',1,true) then	
 				CompLogo.Image = Notify.Icon;
 			else
 				CompLogo.Image = Compkiller:_GetIcon(Notify.Icon);
