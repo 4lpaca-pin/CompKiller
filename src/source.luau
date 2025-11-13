@@ -1397,25 +1397,33 @@ Compkiller.FontAwesome = {
 	['magnifying-glass'] = "rbxassetid://74387839235930",
 };
 
+function Compkiller:SetAllText(flags : {[string] : string})
+	for i,v in next , flags do
+		if Compkiller.Flags[i] and Compkiller.Flags[i].SetText then
+			Compkiller.Flags[i]:SetText(v);
+		end;
+	end;
+end;
+
 function Compkiller:_GetIcon(name : string , font_aws) : string
 	if Compkiller.SecureMode then
 		local AssetId;
-		
-        if font_aws then
-            AssetId = Compkiller.FontAwesome[name] or name;
-        else
-            AssetId = Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
-        end;
 
-        if AssetId and AssetId ~= nil then
-            local asset = Compkiller:CacheImage(AssetId);
-			
-            return asset;	
-        end;	
+		if font_aws then
+			AssetId = Compkiller.FontAwesome[name] or name;
+		else
+			AssetId = Compkiller.Lucide['lucide-'..tostring(name)] or Compkiller.Lucide[name] or Compkiller.Lucide[tostring(name)] or Compkiller.FontAwesome[name] or name;
+		end;
 
-        return "";
+		if AssetId and AssetId ~= nil then
+			local asset = Compkiller:CacheImage(AssetId);
+
+			return asset;	
+		end;	
+
+		return "";
 	end;
-	
+
 	if font_aws then
 		return Compkiller.FontAwesome[name] or name;
 	end;
@@ -1480,9 +1488,9 @@ function Compkiller:GetCalculatePosition(planePos: number, planeNormal: number, 
 end;
 
 function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
-    if Compkiller.SecureMode then
-        return game.Changed:Connect(function() end);
-    end;
+	if Compkiller.SecureMode then
+		return game.Changed:Connect(function() end);
+	end;
 
 	local Part = Instance.new('Part',Compkiller.ArcylicParent);
 	local DepthOfField = Instance.new('DepthOfFieldEffect',cloneref(game:GetService('Lighting')));
@@ -1511,32 +1519,32 @@ function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
 
 	Part.Name = Compkiller:_RandomString();
 
-    local disconnect;
+	local disconnect;
 
 	local UpdateFunction = function()
-        if Compkiller.SecureMode then
-            if Part then
-                Part:Destroy();
-                Part = nil;
-            end;
+		if Compkiller.SecureMode then
+			if Part then
+				Part:Destroy();
+				Part = nil;
+			end;
 
-            if DepthOfField then
-                DepthOfField:Destroy();
-                DepthOfField = nil;
-            end;
+			if DepthOfField then
+				DepthOfField:Destroy();
+				DepthOfField = nil;
+			end;
 
-            if BlockMesh then
-                BlockMesh:Destroy();
-                BlockMesh = nil;
-            end;
+			if BlockMesh then
+				BlockMesh:Destroy();
+				BlockMesh = nil;
+			end;
 
-            if disconnect then
-                disconnect();
-                disconnect = nil;
-            end;
+			if disconnect then
+				disconnect();
+				disconnect = nil;
+			end;
 
-            return;
-        end;
+			return;
+		end;
 
 		local IsWindowActive = WindowRemote:GetValue();
 
@@ -1602,7 +1610,7 @@ function Compkiller:_Blur(element : Frame , WindowRemote) : RBXScriptSignal
 		end;
 	end);
 
-    disconnect = function()
+	disconnect = function()
 		rbxsignal:Disconnect();
 		loopThread:Disconnect();
 		task.cancel(THREAD);
@@ -2422,15 +2430,15 @@ Compkiller.Hash = function(str: string)
 		hex += byte:byte() + #str;
 	end);
 
-    local dh = string.match(str,'%d+');
+	local dh = string.match(str,'%d+');
 
 	return "ck-"..tostring(math.round(hex + 15))..tostring(dh);
 end;
 
 function Compkiller:CacheImage(id: string) : string
-    if not Compkiller.SecureMode or not id or not id:byte() then
-        return "";
-    end;
+	if not Compkiller.SecureMode or not id or not id:byte() then
+		return "";
+	end;
 
 	assert(Compkiller.SecureMode , "please use Compkiller:Security(< string >) before cache image")
 	assert(Compkiller.CacheDirectory , "please use Compkiller:Security(< string >) before cache image")
@@ -2469,9 +2477,9 @@ end;
 function Compkiller:Security(directory: string) -- Security Mode
 	directory = directory or "Compkiller-Cache";
 
-    if not isfolder(directory) then
-        makefolder(directory);
-    end;
+	if not isfolder(directory) then
+		makefolder(directory);
+	end;
 
 	Compkiller.SecureMode = true;
 
@@ -3878,6 +3886,10 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 		function Args:GetValue()
 			return Config.Default;
 		end;
+		
+		function Args:SetText(str : string)
+			Block:SetText(str or Config.Name);
+		end;
 
 		if Config.Flag then
 			Compkiller.Flags[Config.Flag] = Args;
@@ -3950,7 +3962,11 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 		local Args = {};
 
 		Args.Flag = Config.Flag;
-
+		
+		function Args:SetText(str : string)
+			Block:SetText(str or Config.Name);
+		end;
+		
 		function Args:SetValue(value)
 			Config.Default = value;
 
@@ -4024,6 +4040,10 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 			ColorPicker:Update();
 
 			Config.Callback(value,opc);
+		end;
+		
+		function Args:SetText(str : string)
+			Block:SetText(str or Config.Name);
 		end;
 
 		Args.Signal = Signal:Connect(function(bool)
@@ -4449,7 +4469,11 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 
 			Config.Callback(Value);
 		end;
-
+		
+		function Args:SetText(str : string)
+			BlockText.Text = str or Config.Name
+		end;
+		
 		Args.Signal = Signal:Connect(function(bool)
 			if bool then
 				Compkiller:_Animation(SliderInput, TweenInfo.new(0.35),{
@@ -4532,7 +4556,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 	function Args:AddParagraph(Config: Paragraph) -- request by Neptune
 		Config = Compkiller.__CONFIG(Config, {
 			Title = "Paragraph",
-			Content = ""
+			Content = "",
 		});
 
 		local Paragraph = Instance.new("Frame")
@@ -4845,7 +4869,11 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 		local Args = {};
 
 		Args.Flag = Config.Flag;
-
+		
+		function Args:SetText(str : string)
+			BlockText.Text = str or Config.Name
+		end;
+		
 		function Args:SetValue(Value)
 			Config.Default = Value;
 
@@ -5129,6 +5157,10 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal)
 			repi:SetData(Config.Default,Config.Values,Config.Multi,true);
 
 			Config.Callback(Value);
+		end;
+		
+		function Args:SetText(str : string)
+			BlockText.Text = str or Config.Name
 		end;
 
 		function Args:SetValues(v)
@@ -6009,9 +6041,9 @@ function Compkiller.new(Config : Window)
 		end;
 	end;
 
-    function WindowArgs:SetVisible(bool: boolean)
-        CompKiller.Enabled = bool;
-    end;
+	function WindowArgs:SetVisible(bool: boolean)
+		CompKiller.Enabled = bool;
+	end;
 
 	function WindowArgs:DrawCategory(config : Category)
 		config = config or {};
@@ -8870,9 +8902,9 @@ function Compkiller.new(Config : Window)
 		config.WindowName = config.WindowName or Config.Name;
 		config.UserProfile = config.UserProfile or WindowArgs.Profile or string.format("rbxthumb://type=AvatarHeadShot&id=%s&w=150&h=150",tostring(LocalPlayer.UserId));
 
-        if Compkiller.SecureMode and string.find(config.UserProfile, "rbxassetid://",1,true) then
-            config.UserProfile = Compkiller:_GetIcon("user");
-        end;
+		if Compkiller.SecureMode and string.find(config.UserProfile, "rbxassetid://",1,true) then
+			config.UserProfile = Compkiller:_GetIcon("user");
+		end;
 
 		UserText.Text = config.Username;
 		CompLogo.Image = config.Logo;
