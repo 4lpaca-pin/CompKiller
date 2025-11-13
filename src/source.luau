@@ -1398,6 +1398,18 @@ Compkiller.FontAwesome = {
 };
 
 function Compkiller:SetAllText(flags : {[string] : string})
+	if not flags then -- reset to default
+		for i,v in next , Compkiller.Flags do
+			if v.SetText then
+				v:SetText(nil);
+			end;
+		end;
+		
+		return;
+	end;
+	
+	flags = flags or {};
+	
 	for i,v in next , flags do
 		if Compkiller.Flags[i] and Compkiller.Flags[i].SetText then
 			Compkiller.Flags[i]:SetText(v);
