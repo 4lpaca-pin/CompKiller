@@ -2383,7 +2383,7 @@ function Compkiller:_CreateBlock(Signal)
 	function rep:SetText(Text)
 		BlockText.Text = Text;
 	end;
-	
+
 	function rep:GetText()
 		return BlockText.Text;
 	end;
@@ -2485,16 +2485,16 @@ function Compkiller:CacheImage(id: string) : string
 	if isfile(cache_path) then
 		return (getcustomasset or getsynasset)(cache_path);
 	end;
-	
+
 	local imgSize = Compkiller.SecurityConfig.ImageScale;
-	
+
 	local imagesize = (imgSize and string.format("%sx%s", tostring(math.round(imgSize)), tostring(math.round(imgSize)))) or "150x150"
 
-    local endpoint = string.format(
-        "https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=%s&format=Png&isCircular=false",
-        ids,
-        imagesize
-    );
+	local endpoint = string.format(
+		"https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=%s&format=Png&isCircular=false",
+		ids,
+		imagesize
+	);
 
 	local json = game:HttpGet(endpoint);
 
@@ -2530,16 +2530,16 @@ function Compkiller:PreloadIcons()
 		"rbxassetid://10734941499",
 		Compkiller.Logo,
 	};
-	
+
 	if Compkiller.SecureMode then
 		for i,v in next , RequiredAssets do task.wait()
 			pcall(function()
-                Compkiller:CacheImage(v);
-            end);
+				Compkiller:CacheImage(v);
+			end);
 		end;
 	else
 		local ContentProvider: ContentProvider = cloneref(game:GetService('ContentProvider'));
-		
+
 		for i,v in next , RequiredAssets do
 			ContentProvider:Preload(v);
 		end;
@@ -2554,7 +2554,7 @@ function Compkiller:Security(directory: string,Config: SecurityConfig) -- Securi
 	end;
 
 	Compkiller.SecureMode = true;
-	
+
 	Compkiller.SecurityConfig = Config or {};
 
 	Compkiller.CacheDirectory = directory;
@@ -3170,7 +3170,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	if Compkiller.__KEYBINDS_CACHE then
 		return Compkiller.__KEYBINDS_CACHE;
 	end;
-	
+
 	local Keybinds = Instance.new("Frame")
 	local UICorner = Instance.new("UICorner")
 	local IconFrame = Instance.new("Frame")
@@ -3192,7 +3192,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	Keybinds.Position = UDim2.new(0,100,0,100)
 	Keybinds.Size = UDim2.new(0, 125, 0, 25)
 	Keybinds.ZIndex = 150
-	
+
 	table.insert(Compkiller.Elements.BGDBColor,{
 		Element = Keybinds,
 		Property = 'BackgroundColor3'
@@ -3213,12 +3213,12 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	IconFrame.Size = UDim2.new(1, 10, 1, 0)
 	IconFrame.SizeConstraint = Enum.SizeConstraint.RelativeYY
 	IconFrame.ZIndex = 149
-	
+
 	table.insert(Compkiller.Elements.BGDBColor,{
 		Element = IconFrame,
 		Property = 'BackgroundColor3'
 	});
-	
+
 	UICorner_2.CornerRadius = UDim.new(0, 3)
 	UICorner_2.Parent = IconFrame
 
@@ -3230,12 +3230,12 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	Frame.Position = UDim2.new(1, -5, 0.5, 0)
 	Frame.Size = UDim2.new(0, 2, 1, 0)
 	Frame.ZIndex = 151
-	
+
 	table.insert(Compkiller.Elements.Highlight,{
 		Element = Frame,
 		Property = 'BackgroundColor3'
 	});
-	
+
 	Icon.Name = "Icon"
 	Icon.Parent = IconFrame
 	Icon.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -3272,7 +3272,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	HeadLabel.Text = "Keybinds"
 	HeadLabel.TextColor3 = Compkiller.Colors.SwitchColor
 	HeadLabel.TextSize = 12.000
-	
+
 	table.insert(Compkiller.Elements.SwitchColor,{
 		Element = HeadLabel,
 		Property = 'TextColor3'
@@ -3302,19 +3302,19 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 	MovingFrame.BorderSizePixel = 0
 	MovingFrame.Position = UDim2.new(1, 0, 0.5, 0)
 	MovingFrame.Size = UDim2.new(1, 30, 1, 0)
-	
+
 	Compkiller:Drag(MovingFrame,Keybinds,0.1);
-	
+
 	local Ref = {
 		Root = Keybinds
 	};
-	
+
 	Ref.THREAD = task.spawn(function()
 		while true do task.wait()
 			Compkiller:_Animation(MainFrame,TweenInfo.new(0.4),{
 				Size = UDim2.new(1, 30, 1, UIListLayout.AbsoluteContentSize.Y + 1)
 			});
-			
+
 			if UIListLayout.AbsoluteContentSize.Y > 1 then
 				Compkiller:_Animation(IconFrame,TweenInfo.new(0.25),{
 					BackgroundTransparency = 0.3
@@ -3323,7 +3323,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 				Compkiller:_Animation(Frame,TweenInfo.new(0.25),{
 					BackgroundTransparency = 0
 				})
-				
+
 				Compkiller:_Animation(HeadLabel,TweenInfo.new(0.25),{
 					TextTransparency = 0
 				})
@@ -3331,9 +3331,9 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 				Compkiller:_Animation(Icon,TweenInfo.new(0.25),{
 					ImageTransparency = 0
 				});
-				
+
 				local LargF = 100;
-				
+
 				for i,v in next , MainFrame:GetChildren() do
 					if v:GetAttribute('AvgScale') then
 						if v:GetAttribute('AvgScale') > LargF then
@@ -3341,7 +3341,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 						end;
 					end;
 				end;
-				
+
 				Compkiller:_Animation(Keybinds,TweenInfo.new(0.25),{
 					BackgroundTransparency = 0.025,
 					Size = UDim2.new(0, LargF, 0, 25)
@@ -3350,7 +3350,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 				Compkiller:_Animation(HeadLabel,TweenInfo.new(0.25),{
 					TextTransparency = 1
 				})
-				
+
 				Compkiller:_Animation(Keybinds,TweenInfo.new(0.25),{
 					BackgroundTransparency = 1
 				})
@@ -3367,11 +3367,11 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 					ImageTransparency = 1
 				});
 			end;
-			
+
 			Keybinds.Visible = (Keybinds.BackgroundTransparency < 0.9 and true) or false;
 		end;
 	end);
-	
+
 	function Ref:AddFrame()
 		local Keyholder = Instance.new("Frame")
 		local UICorner = Instance.new("UICorner")
@@ -3388,12 +3388,12 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 		Keyholder.Size = UDim2.new(1, 0, 0, 28)
 		Keyholder.ZIndex = MainFrame.ZIndex + 3
 		Keyholder.ClipsDescendants = true;
-		
+
 		table.insert(Compkiller.Elements.BGDBColor,{
 			Element = Keyholder,
 			Property = 'BackgroundColor3'
 		});
-		
+
 		UICorner.CornerRadius = UDim.new(0, 3)
 		UICorner.Parent = Keyholder
 
@@ -3411,12 +3411,12 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 		Label.TextSize = 11.000
 		Label.TextTransparency = 0.100
 		Label.TextXAlignment = Enum.TextXAlignment.Left
-		
+
 		table.insert(Compkiller.Elements.SwitchColor,{
 			Element = Label,
 			Property = 'TextColor3'
 		});
-		
+
 		Line.Name = "Line"
 		Line.Parent = Keyholder
 		Line.AnchorPoint = Vector2.new(1, 0.5)
@@ -3426,12 +3426,12 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 		Line.Position = UDim2.new(1, 0, 0.5, 0)
 		Line.Size = UDim2.new(0, 30, 1, 0)
 		Line.ZIndex = MainFrame.ZIndex + 4
-		
+
 		table.insert(Compkiller.Elements.BGDBColor,{
 			Element = Line,
 			Property = 'BackgroundColor3'
 		});
-		
+
 		TypeLabel.Name = "TypeLabel"
 		TypeLabel.Parent = Line
 		TypeLabel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -3444,55 +3444,55 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 		TypeLabel.Font = Enum.Font.GothamMedium
 		TypeLabel.TextColor3 = Compkiller.Colors.SwitchColor
 		TypeLabel.TextSize = 11.000
-		
+
 		table.insert(Compkiller.Elements.SwitchColor,{
 			Element = TypeLabel,
 			Property = 'TextColor3'
 		});
-		
+
 		UICorner_2.CornerRadius = UDim.new(0, 3)
 		UICorner_2.Parent = Line
-		
+
 		local UpdateScale = function()
 			local t = TextService:GetTextSize(TypeLabel.Text , TypeLabel.TextSize , TypeLabel.Font , Vector2.new(math.huge,math.huge));
 			local z = TextService:GetTextSize(Label.Text , Label.TextSize , Label.Font , Vector2.new(math.huge,math.huge));
 
 			Line.Size = UDim2.new(0, t.X + 5, 1, 0);
-			
+
 			Keyholder:SetAttribute('AvgScale',(t.X + z.X) + 55);
 		end;
-		
+
 		UpdateScale();
-		
+
 		local frame_ref = {};
-		
+
 		function frame_ref:SetName(str: string)
 			Label.Text = str or Label.Text;
-			
+
 			UpdateScale();
 		end;
-		
+
 		function frame_ref:SetType(str: string)
 			TypeLabel.Text = str or TypeLabel.Text;
-			
+
 			UpdateScale();
 		end;
-		
+
 		function frame_ref:SetVisible(v)
 			if v then
 				Keyholder.Parent = MainFrame;
 			else
 				Keyholder.Parent = nil;
 			end;
-			
+
 			UpdateScale();
 		end;
-		
+
 		return frame_ref;
 	end;
-	
+
 	Compkiller.__KEYBINDS_CACHE = Ref;
-	
+
 	return Ref;
 end;
 
@@ -3502,7 +3502,7 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 	local SubIndex = math.random(40,100);
 	local KeybindInd = Compkiller:_DrawKeybinds(Window);
 	local KeybindFrame = KeybindInd:AddFrame();
-	
+
 	local KeybindHandler = Instance.new("Frame")
 	local UIStroke = Instance.new("UIStroke")
 	local UICorner = Instance.new("UICorner")
@@ -3519,20 +3519,20 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 	KeybindHandler.Size = UDim2.new(0, 225, 0, 0)
 	KeybindHandler.ZIndex = Zindex + SubIndex
 	KeybindHandler.AnchorPoint = Vector2.new(0.5,0)
-	
+
 	table.insert(Compkiller.Elements.BlockBackground,{
 		Element = KeybindHandler,
 		Property = 'BackgroundColor3'
 	});
-	
+
 	UIStroke.Color = Compkiller.Colors.HighStrokeColor
 	UIStroke.Parent = KeybindHandler
-	
+
 	table.insert(Compkiller.Elements.HighStrokeColor,{
 		Element = UIStroke,
 		Property = 'Color'
 	});
-	
+
 	UICorner.CornerRadius = UDim.new(0, 6)
 	UICorner.Parent = KeybindHandler
 
@@ -3549,16 +3549,16 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 	UIListLayout.Parent = ElementObjs
 	UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	
+
 	local ToggleUI = function(bool)
 		if bool then
 			KeybindHandler.Position = UDim2.new(0,Parent.AbsolutePosition.X + 225,0,Parent.AbsolutePosition.Y)
-			
+
 			Compkiller:_Animation(KeybindHandler,TweenInfo.new(0.25),{
 				BackgroundTransparency = 0,
 				Size = UDim2.new(0, 225, 0, UIListLayout.AbsoluteContentSize.Y + 5)
 			});
-			
+
 			Compkiller:_Animation(UIStroke,TweenInfo.new(0.3),{
 				Transparency = 0
 			});
@@ -3573,52 +3573,52 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			});
 		end;
 	end;
-	
+
 	ToggleUI(false);
-	
+
 	KB_Signal:Connect(ToggleUI);
-	
+
 	local APIRef = {
 		Name = ElementAPI:GetText()
 	};
-	
+
 	local ModeEnum = {
 		[1] = 'Off', -- disabled / off
 		[2] = "Hold",
 		[3] = "Toggle",
 		[4] = "On", -- alway on
 	};
-	
+
 	local e_m = {
 		['Off'] = 1,
 		['Hold'] = 2,
 		['Toggle'] = 3,
 		['On'] = 4,
 	};
-	
+
 	if ObjectType == "Toggle" then
 		APIRef.Off = false;
 		APIRef.On = true;
 		APIRef.Keybind = nil;
 		APIRef.Mode = e_m.Off;
-		
-		
+
+
 	elseif ObjectType == "Number" then
 		APIRef.Off = 1;
 		APIRef.On = 0;
 		APIRef.Keybind = nil;
 		APIRef.Mode = e_m.Off;
 	end;
-	
+
 	local Flag = {};
-	
+
 	APIRef.Update = function()
 		KeybindFrame:SetName(APIRef.Name);
 		KeybindFrame:SetType(ModeEnum[APIRef.Mode]);
 	end
-	
+
 	local ElementAPIs = Compkiller:_LoadElement(ElementObjs , true , KB_Signal , true);
-	
+
 	Flag.Key = ElementAPIs:AddKeybind({
 		Name = "Key",
 		Default = APIRef.Keybind,
@@ -3626,22 +3626,20 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			APIRef.Keybind = v;
 		end,
 	});
-	
+
 	Flag.Mode = ElementAPIs:AddDropdown({
 		Name = "Mode",
 		Default = ModeEnum[APIRef.Mode],
 		Values = ModeEnum,
 		Callback = function(v)
 			APIRef.Mode = e_m[v];
-			
+
 			if APIRef.Mode == 4 then
 				ElementAPI:SetValue(APIRef.On);
-			elseif APIRef.Mode == 1 then
-				ElementAPI:SetValue(APIRef.Off);
 			end;
 		end,
 	});
-	
+
 	if ObjectType == "Toggle" then
 		Flag.On = ElementAPIs:AddToggle({
 			Name = "ON Value",
@@ -3650,7 +3648,7 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 				APIRef.On = v;
 			end,
 		});
-		
+
 		Flag.Off = ElementAPIs:AddToggle({
 			Name = "OFF Value",
 			Default = APIRef.Off,
@@ -3670,7 +3668,7 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 				APIRef.On = v;
 			end,
 		});
-		
+
 		Flag.Off = ElementAPIs:AddSlider({
 			Name = "OFF Value",
 			Default = APIRef.Off,
@@ -3683,7 +3681,7 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			end,
 		});
 	end;
-	
+
 	Flag.ShowInKeybindList = ElementAPIs:AddTextBox({
 		Name = "Name",
 		Default = APIRef.Name,
@@ -3692,10 +3690,10 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			APIRef.Name = v;
 		end,
 	})
-	
+
 	function APIRef:GetSettings()
 		APIRef.Update();
-		
+
 		return {
 			Key = APIRef.Keybind,
 			On = APIRef.On,
@@ -3704,17 +3702,17 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			Name = APIRef.Name,
 		};
 	end;
-	
+
 	function APIRef:LoadSettings(cfg : KeybindSettings)
 		Flag.ShowInKeybindList:SetValue(cfg.Name);
 		Flag.Off:SetValue(cfg.Off);
 		Flag.On:SetValue(cfg.On);
 		Flag.Mode:SetValue(ModeEnum[cfg.Mode]);
 		Flag.Key:SetValue(cfg.Key);
-		
+
 		APIRef.Update();
 	end;
-	
+
 	APIRef.Thread = task.spawn(function()
 		while true do task.wait(0.01)
 			if APIRef.Mode ~= 1 then
@@ -3730,13 +3728,13 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			end;
 		end;
 	end)
-	
+
 	Parent.InputEnded:Connect(function(Input,Typing)
 		if Input.UserInputType == Enum.UserInputType.MouseButton2 and not Typing then
 			KB_Signal:Fire(true);
 		end;
 	end);
-	
+
 	UserInputService.InputBegan:Connect(function(Input)
 		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2 or Input.UserInputType == Enum.UserInputType.Touch then
 			if not Compkiller:_IsMouseOverFrame(Parent) and not Compkiller:_IsMouseOverFrame(KeybindHandler) then
@@ -3744,10 +3742,10 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			end;
 		end;
 	end);
-	
+
 	UserInputService.InputBegan:Connect(function(Input,Typing)
 		if Input.KeyCode.Name == APIRef.Keybind or Input.KeyCode == APIRef.Keybind or (Input.UserInputType == Enum.UserInputType.MouseButton1 and APIRef.Keybind == "MouseLeft") or (Input.UserInputType == Enum.UserInputType.MouseButton2 and APIRef.Keybind == "MouseRight") then
-			
+
 			if APIRef.Mode == 2 or APIRef.Mode == 4 then
 				ElementAPI:SetValue(APIRef.On);
 			elseif APIRef.Mode == 3 then
@@ -3759,10 +3757,10 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 			end;
 		end;
 	end);
-	
+
 	UserInputService.InputEnded:Connect(function(Input,Typing)
 		if Input.KeyCode.Name == APIRef.Keybind or Input.KeyCode == APIRef.Keybind or (Input.UserInputType == Enum.UserInputType.MouseButton1 and APIRef.Keybind == "MouseLeft") or (Input.UserInputType == Enum.UserInputType.MouseButton2 and APIRef.Keybind == "MouseRight") then
-			
+
 			if APIRef.Mode == 2 then
 				ElementAPI:SetValue(APIRef.Off);
 			elseif APIRef.Mode == 4 then
@@ -4519,7 +4517,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		});
 
 		local Block = Compkiller:_CreateBlock(Signal);
-		
+
 		Block:SetParent(Parent);
 
 		Block:SetText(Config.Name);
@@ -4545,7 +4543,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		end);
 
 		local Args = {};
-		
+
 		Args.Flag = Config.Flag;
 
 		function Args:SetValue(value)
@@ -4572,7 +4570,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			Block:SetText(str or Config.Name);
 		end;
-		
+
 		function Args:GetText()
 			return Block:GetText();
 		end;
@@ -4580,10 +4578,10 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		if Config.Flag then
 			Compkiller.Flags[Config.Flag] = Args;
 		end;
-		
+
 		if not DisableStackKeybind then
 			local AutoKeybind = Compkiller:_KeybindHandler(Block.Root , "Toggle" , Args , Signal , Zindex , Config);
-			
+
 			Args.AutoKeybind = AutoKeybind;
 		end;
 
@@ -4658,7 +4656,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			Block:SetText(str or Config.Name);
 		end;
-		
+
 		function Args:GetText()
 			return Block:GetText();
 		end;
@@ -4741,7 +4739,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			Block:SetText(str or Config.Name);
 		end;
-		
+
 		function Args:GetText()
 			return Block:GetText();
 		end;
@@ -4917,7 +4915,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 			Config.Name = t;
 			TextLabel.Text = Config.Name;
 		end;
-		
+
 		function Args:GetText()
 			return TextLabel.Text;
 		end;
@@ -5177,7 +5175,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			BlockText.Text = str or Config.Name
 		end;
-		
+
 		function Args:GetText()
 			return BlockText.Text;
 		end;
@@ -5257,7 +5255,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		if Config.Flag then
 			Compkiller.Flags[Config.Flag] = Args;
 		end;
-		
+
 		if not DisableStackKeybind then
 			local AutoKeybind = Compkiller:_KeybindHandler(Slider , "Number" , Args , Signal , Zindex , Config);
 
@@ -5587,7 +5585,7 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			BlockText.Text = str or Config.Name
 		end;
-		
+
 		function Args:GetText()
 			return BlockText.Text;
 		end;
@@ -5880,12 +5878,12 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 		function Args:SetText(str : string)
 			BlockText.Text = str or Config.Name
 		end;
-		
-		
+
+
 		function Args:GetText()
 			return BlockText.Text;
 		end;
-		
+
 		function Args:SetValues(v)
 			Config.Values = v;
 
@@ -6195,9 +6193,9 @@ function Compkiller.new(Config : Window)
 	local UserText = Instance.new("TextLabel")
 	local ExpireText = Instance.new("TextLabel")
 	local TabMainFrame = Instance.new("Frame")
-	
+
 	Compkiller:_DrawKeybinds(CompKiller);
-	
+
 	UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 		TabButtonScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y)
 	end);
@@ -7525,8 +7523,8 @@ function Compkiller.new(Config : Window)
 		SectionClose.ZIndex = 10
 		SectionClose.Image = Compkiller:CacheImage("rbxassetid://109535175596957")
 		SectionClose.ImageTransparency = 0.500
-		
-	
+
+
 		ScrollingFrame.Parent = ConfigList
 		ScrollingFrame.Active = true
 		ScrollingFrame.AnchorPoint = Vector2.new(0.5, 0)
@@ -9274,7 +9272,7 @@ function Compkiller.new(Config : Window)
 				refresh();
 				refreshScale();
 			end);
-			
+
 			task.delay(2.5,function()
 				refresh();
 				refreshScale();
@@ -10002,7 +10000,7 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 					local Value = Flags[v.Flag];
 
 					if Value then
-
+					
 						if v.Value.Type == "NormalElement" then
 							Value.Functions:SetValue(v.Value.Value);
 
@@ -10014,7 +10012,7 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 
 							Value.Functions:SetValue(Color , Transparency);
 						end;
-						
+
 						if Value.Functions.AutoKeybind then
 							if v.AutoKeybind then
 								Value.Functions.AutoKeybind:LoadSettings(v.AutoKeybind)
