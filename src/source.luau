@@ -6,9 +6,11 @@
     Github: https://github.com/4lpaca-pin/CompKiller
     Original: compkiller.net
 
-        Version: 2.5
-    - Improved Secure Mode
-    - Added Auto Keybinds
+        Version: 2.6
+    - Added Performance Mode [BETA]
+    	Compkiller:OptimizeMode(< boolean >)
+  	
+    - Improved Auto Keybinds
 --]]
 
 --- Export Types ---
@@ -354,7 +356,7 @@ local Mouse: Mouse = LocalPlayer:GetMouse();
 local CurrentCamera: Camera? = cloneref(workspace.CurrentCamera);
 
 local Compkiller = {
-	Version = '2.5',
+	Version = '2.6',
 	Logo = "rbxassetid://120245531583106",
 	Windows = {},
 	Scale = {
@@ -363,6 +365,9 @@ local Compkiller = {
 		TabOpen = 185,
 		TabClose = 85,
 	},
+	PerformanceMode = false,
+	WindowsNil = {},
+	NilFolder = Instance.new('Folder'),
 	ArcylicParent = CurrentCamera,
 	ProtectGui = protect_gui or protectgui or (syn and syn.protect_gui) or function(s) return s; end,
 };
@@ -1414,6 +1419,27 @@ Compkiller.FontAwesome = {
 	['magnifying-glass'] = "rbxassetid://74387839235930",
 };
 
+function Compkiller:OptimizeMode(v)
+	Compkiller.PerformanceMode = v;
+end;
+
+function Compkiller:IsStudio()
+	return RunService:IsStudio()	
+end;
+
+function Compkiller:_SetNilP(Ins: Instance , Parent: Instance)
+	Compkiller.WindowsNil = Compkiller.WindowsNil or {};
+	Compkiller.NilFolder = Compkiller.NilFolder or Instance.new('Folder');
+	
+	if not Compkiller.WindowsNil[Ins] then
+		local win = Compkiller:_GetWindowFromElement(Ins);
+		
+		Compkiller.WindowsNil[Ins] = win;
+	end;
+	
+	Ins.Parent = Parent or Compkiller.NilFolder;
+end;
+
 function Compkiller:SetAllText(flags : {[string] : string})
 	if not flags then -- reset to default
 		for i,v in next , Compkiller.Flags do
@@ -1688,9 +1714,19 @@ function Compkiller:_AddDragBlacklist(Frame: Frame)
 end;
 
 function Compkiller:_GetWindowFromElement(Element)
+	if Compkiller.WindowsNil[Element] then
+		return Compkiller.WindowsNil[Element];
+	end;
+	
 	for i,v : ScreenGui in next , Compkiller.Windows do
 		if v and Element:IsDescendantOf(v) then
 			return v;
+		end;
+	end;
+	
+	for Frame,Window in next , Compkiller.WindowsNil do
+		if Element:IsDescendantOf(Frame) or Frame == Element then
+			return Window;
 		end;
 	end;
 end;
@@ -1757,7 +1793,7 @@ function Compkiller:Drag(InputFrame: Frame, MoveFrame: Frame, Speed : number)
 	local startPos: UDim2 = nil;
 	local Tween = TweenInfo.new(Speed);
 
-	local function updateInput(input)
+	local updateInput = function(input)
 		local delta = input.Position - dragStart;
 		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
 			startPos.Y.Scale, startPos.Y.Offset + delta.Y);
@@ -2404,6 +2440,12 @@ function Compkiller:_CreateBlock(Signal)
 
 	function rep:SetLine(visible)
 		BlockLine.Visible = visible;
+		
+		if not visible then
+			BlockLine.Parent = nil;
+		else
+			BlockLine.Parent = rep.Root;
+		end;
 	end;
 
 	function rep:SetTransparency(num)
@@ -2479,11 +2521,11 @@ function Compkiller:CacheImage(id: string) : string
 	local ids = string.match(id , "%d+");
 
 	local Hash = Compkiller.Hash(id);
-
+	
 	local cache_path = string.format("%s/cache-%s.png" ,Compkiller.CacheDirectory , Hash);
 
 	if isfile(cache_path) then
-		return (getcustomasset or getsynasset)(cache_path);
+		return (getcustomasset or getsynasset or function() return ''; end)(cache_path);
 	end;
 
 	local imgSize = Compkiller.SecurityConfig.ImageScale;
@@ -2509,7 +2551,7 @@ function Compkiller:CacheImage(id: string) : string
 
 		task.wait();
 
-		return (getcustomasset or getsynasset)(cache_path);
+		return (getcustomasset or getsynasset or function() return ''; end)(cache_path);
 	end;
 
 	return "";
@@ -2824,6 +2866,16 @@ function Compkiller:_AddColorPickerPanel(Button: ImageButton , Callback: (Color:
 
 	Compkiller:_AddPropertyEvent(ColorPickerWindow,function(v)
 		ColorPickerWindow.Visible = v;
+		
+		if Compkiller.PerformanceMode then
+			if ColorPickerWindow.Visible then
+				Compkiller:_SetNilP(ColorPickerWindow , Window);
+			else
+				Compkiller:_SetNilP(ColorPickerWindow , nil);
+			end;
+		else
+			Compkiller:_SetNilP(ColorPickerWindow , Window);
+		end;
 	end)
 
 	local ToggleUI = function(bool)
@@ -3369,6 +3421,16 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 			end;
 
 			Keybinds.Visible = (Keybinds.BackgroundTransparency < 0.9 and true) or false;
+			
+			if Compkiller.PerformanceMode then
+				if Keybinds.Visible then
+					Compkiller:_SetNilP(Keybinds , Window);
+				else
+					Compkiller:_SetNilP(Keybinds , nil);
+				end;
+			else
+				Compkiller:_SetNilP(Keybinds , Window);
+			end;
 		end;
 	end);
 
@@ -3382,7 +3444,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 
 		Keyholder.Name = "Keyholder"
 		Keyholder.BackgroundColor3 = Compkiller.Colors.BGDBColor
-		Keyholder.BackgroundTransparency = 0.600
+		Keyholder.BackgroundTransparency = 1
 		Keyholder.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Keyholder.BorderSizePixel = 0
 		Keyholder.Size = UDim2.new(1, 0, 0, 28)
@@ -3409,7 +3471,7 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 		Label.Font = Enum.Font.GothamMedium
 		Label.TextColor3 = Compkiller.Colors.SwitchColor
 		Label.TextSize = 11.000
-		Label.TextTransparency = 0.100
+		Label.TextTransparency = 1
 		Label.TextXAlignment = Enum.TextXAlignment.Left
 
 		table.insert(Compkiller.Elements.SwitchColor,{
@@ -3480,6 +3542,42 @@ function Compkiller:_DrawKeybinds(Window: ScreenGui)
 
 		function frame_ref:SetVisible(v)
 			if v then
+				Compkiller:_Animation(Keyholder,TweenInfo.new(0.1),{
+					BackgroundTransparency = 0.600,
+					Size = UDim2.new(1, 0, 0, 28)
+				});
+				
+				Compkiller:_Animation(Label,TweenInfo.new(0.15),{
+					TextTransparency = 0.100
+				});
+				
+				Compkiller:_Animation(Line,TweenInfo.new(0.15),{
+					BackgroundTransparency = 0
+				});
+				
+				Compkiller:_Animation(TypeLabel,TweenInfo.new(0.15),{
+					TextTransparency = 0
+				});
+			else
+				Compkiller:_Animation(Keyholder,TweenInfo.new(0.1),{
+					BackgroundTransparency = 1,
+					Size = UDim2.new(1, 0, 0, 0)
+				});
+
+				Compkiller:_Animation(Label,TweenInfo.new(0.15),{
+					TextTransparency = 1
+				});
+
+				Compkiller:_Animation(Line,TweenInfo.new(0.15),{
+					BackgroundTransparency = 1
+				});
+
+				Compkiller:_Animation(TypeLabel,TweenInfo.new(0.15),{
+					TextTransparency = 1
+				});
+			end;
+			
+			if Keyholder.BackgroundTransparency <= 0.95 then
 				Keyholder.Parent = MainFrame;
 			else
 				Keyholder.Parent = nil;
@@ -3519,7 +3617,7 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 	KeybindHandler.Size = UDim2.new(0, 225, 0, 0)
 	KeybindHandler.ZIndex = Zindex + SubIndex
 	KeybindHandler.AnchorPoint = Vector2.new(0.5,0)
-
+	
 	table.insert(Compkiller.Elements.BlockBackground,{
 		Element = KeybindHandler,
 		Property = 'BackgroundColor3'
@@ -3549,7 +3647,23 @@ function Compkiller:_KeybindHandler(Parent: Frame , ObjectType: string , Element
 	UIListLayout.Parent = ElementObjs
 	UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
+	
+	local refreshPF = function()
+		if Compkiller.PerformanceMode then
+			if KeybindHandler.Size.Y.Offset > 1 then
+				Compkiller:_SetNilP(KeybindHandler , Window);
+			else
+				Compkiller:_SetNilP(KeybindHandler , nil);
+			end;
+		else
+			Compkiller:_SetNilP(KeybindHandler , Window);
+		end;
+	end;
+	
+	KeybindHandler:GetPropertyChangedSignal('Size'):Connect(refreshPF);
+	
+	task.delay(0.1,refreshPF);
+	
 	local ToggleUI = function(bool)
 		if bool then
 			KeybindHandler.Position = UDim2.new(0,Parent.AbsolutePosition.X + 225,0,Parent.AbsolutePosition.Y)
@@ -3873,6 +3987,16 @@ function Compkiller:_LoadOption(Value , TabSignal)
 			else
 				Helper.Text.Visible = true;
 			end;
+			
+			if Compkiller.PerformanceMode then
+				if Helper.Text.Visible then
+					Compkiller:_SetNilP(Helper.Text , Window);
+				else
+					Compkiller:_SetNilP(Helper.Text , nil);
+				end;
+			else
+				Compkiller:_SetNilP(Helper.Text , Window);
+			end;
 		end)
 
 		local Update = function()
@@ -4096,6 +4220,16 @@ function Compkiller:_LoadOption(Value , TabSignal)
 
 		Compkiller:_AddPropertyEvent(ExtractElement,function(bool)
 			ExtractElement.Visible = bool;
+			
+			if Compkiller.PerformanceMode then
+				if ExtractElement.Visible then
+					Compkiller:_SetNilP(ExtractElement , Window);
+				else
+					Compkiller:_SetNilP(ExtractElement , nil);
+				end;
+			else
+				Compkiller:_SetNilP(ExtractElement , Window);
+			end;
 		end);
 
 		Compkiller:_AddDragBlacklist(ExtractElement);
@@ -4165,6 +4299,7 @@ end;
 
 function Compkiller:_LoadDropdown(BaseParent: TextButton , Callback: () -> any)
 	local Window = Compkiller:_GetWindowFromElement(BaseParent);
+
 	local BaseZ_Index = BaseParent.ZIndex + (math.random(1,15) * 100);
 
 	local DropdownWindow = Instance.new("Frame")
@@ -4192,6 +4327,16 @@ function Compkiller:_LoadDropdown(BaseParent: TextButton , Callback: () -> any)
 	Compkiller:_AddDragBlacklist(DropdownWindow);
 	Compkiller:_AddPropertyEvent(DropdownWindow,function(v)
 		DropdownWindow.Visible = v;
+		
+		if Compkiller.PerformanceMode then
+			if DropdownWindow.Visible then
+				Compkiller:_SetNilP(DropdownWindow , Window);
+			else
+				Compkiller:_SetNilP(DropdownWindow , nil);
+			end;
+		else
+			Compkiller:_SetNilP(DropdownWindow , Window);
+		end;
 	end)
 
 	UIStroke.Color = Compkiller.Colors.HighStrokeColor
@@ -6984,6 +7129,16 @@ function Compkiller.new(Config : Window)
 			else
 				ContainerTab.Visible = false;
 			end;
+			
+			if Compkiller.PerformanceMode then
+				if ContainerTab.Visible then
+					Compkiller:_SetNilP(ContainerTab , TabMainFrame);
+				else
+					Compkiller:_SetNilP(ContainerTab , nil);
+				end;
+			else
+				Compkiller:_SetNilP(ContainerTab , TabMainFrame);
+			end;
 		end);
 
 		local TabOpen = function(bool)
@@ -7743,6 +7898,17 @@ function Compkiller.new(Config : Window)
 			else
 				TabConfig.Visible = false;
 			end;
+			
+			if Compkiller.PerformanceMode then
+				if TabConfig.Visible then
+					Compkiller:_SetNilP(TabConfig , TabMainFrame);
+				else
+					Compkiller:_SetNilP(TabConfig , nil);
+				end;
+			else
+				Compkiller:_SetNilP(TabConfig , TabMainFrame);
+			end;
+			
 		end)
 
 		local TabOpen = function(bool)
@@ -8617,6 +8783,16 @@ function Compkiller.new(Config : Window)
 				else
 					TabContent.Visible = false;
 				end;
+				
+				if Compkiller.PerformanceMode then
+					if TabContent.Visible then
+						Compkiller:_SetNilP(TabContent , Internal.Parent);
+					else
+						Compkiller:_SetNilP(TabContent , nil);
+					end;
+				else
+					Compkiller:_SetNilP(TabContent , Internal.Parent);
+				end;
 			end);
 
 			Upvalue.Left = Left;
@@ -8633,6 +8809,16 @@ function Compkiller.new(Config : Window)
 				TabContent.Visible = false;
 			else
 				TabContent.Visible = true;
+			end;
+			
+			if Compkiller.PerformanceMode then
+				if TabContent.Visible then
+					Compkiller:_SetNilP(TabContent , Internal.Parent);
+				else
+					Compkiller:_SetNilP(TabContent , nil);
+				end;
+			else
+				Compkiller:_SetNilP(TabContent , Internal.Parent);
 			end;
 		else
 			-- Button --
@@ -8800,6 +8986,16 @@ function Compkiller.new(Config : Window)
 					TabContent.Visible = true;
 				else
 					TabContent.Visible = false;
+				end;
+				
+				if Compkiller.PerformanceMode then
+					if TabContent.Visible then
+						Compkiller:_SetNilP(TabContent , TabMainFrame);
+					else
+						Compkiller:_SetNilP(TabContent , nil);
+					end;
+				else
+					Compkiller:_SetNilP(TabContent , TabMainFrame);
 				end;
 			end)
 
@@ -9536,6 +9732,19 @@ function Compkiller.new(Config : Window)
 				function Arg:Visible(v)
 					Icon.Visible = v;
 					TextLabel.Visible = v;
+					
+					if Compkiller.PerformanceMode then
+						if v then
+							Compkiller:_SetNilP(Icon , WaternarkList);
+							Compkiller:_SetNilP(TextLabel , WaternarkList);
+						else
+							Compkiller:_SetNilP(Icon , nil);
+							Compkiller:_SetNilP(TextLabel , nil);
+						end;
+					else
+						Compkiller:_SetNilP(Icon , WaternarkList);
+						Compkiller:_SetNilP(TextLabel , WaternarkList);
+					end;
 				end;
 
 				return Arg;
@@ -10000,7 +10209,7 @@ function Compkiller:ConfigManager(ConfigManager: ConfigManager) : ConfigFunction
 					local Value = Flags[v.Flag];
 
 					if Value then
-					
+
 						if v.Value.Type == "NormalElement" then
 							Value.Functions:SetValue(v.Value.Value);
 
@@ -10380,5 +10589,7 @@ function Compkiller.newNotify()
 
 	return Compkiller.NOTIFY_CACHE;
 end;
+
+Compkiller.NilFolder.Name = "Nil-Instances";
 
 return Compkiller;
