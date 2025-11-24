@@ -5679,9 +5679,17 @@ function Compkiller:_LoadElement(Parent: Frame , EnabledLine: boolean , Signal ,
 
 			local MainScale = ((scale.X > Base.X) and scale.X) or Base.X;
 
-			Compkiller:_Animation(LinkValues,TweenInfo.new(0.25),{
-				Size = UDim2.fromOffset(math.clamp(MainScale + 7 , Base.X , TextBox.AbsoluteSize.X / 2) , 16)
-			})
+			local xp = pcall(function()
+				Compkiller:_Animation(LinkValues,TweenInfo.new(0.25),{
+					Size = UDim2.fromOffset(math.clamp(MainScale + 7 , Base.X , TextBox.AbsoluteSize.X / 2) , 16)
+				})
+			end);
+
+			if not xp then
+				Compkiller:_Animation(LinkValues,TweenInfo.new(0.25),{
+					Size = UDim2.fromOffset(MainScale + 7 , 16)
+				})
+			end;
 		end;
 
 		local parse = function(text)
