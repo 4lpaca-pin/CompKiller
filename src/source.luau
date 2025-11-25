@@ -2524,6 +2524,10 @@ function Compkiller:CacheImage(id: string) : string
 
 	local ids = string.match(id , "%d+");
 
+	if ids == nil then
+		return id;
+	end;
+
 	local Hash = Compkiller.Hash(id);
 
 	local cache_path = string.format("%s/cache-%s.png" ,Compkiller.CacheDirectory , Hash);
@@ -2535,6 +2539,10 @@ function Compkiller:CacheImage(id: string) : string
 	local imgSize = Compkiller.SecurityConfig.ImageScale;
 
 	local imagesize = (imgSize and string.format("%sx%s", tostring(math.round(imgSize)), tostring(math.round(imgSize)))) or "150x150"
+
+	if imagesize == nil then
+		return ''
+	end;
 
 	local endpoint = string.format(
 		"https://thumbnails.roblox.com/v1/assets?assetIds=%s&size=%s&format=Png&isCircular=false",
